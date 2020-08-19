@@ -1,1 +1,1 @@
-# dukascopy
+# DUKA
