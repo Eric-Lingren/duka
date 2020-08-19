@@ -8,6 +8,7 @@ import time
 url = 'https://datafeed.dukascopy.com/datafeed/PAIR/YYYY/MM/DD/HHh_ticks.bi5'
 data_urls = []
 requested_dates = []
+tasks = []
 
 
 
@@ -23,8 +24,7 @@ def initilize_scraper(requested_output_path, requested_currency, start_date, end
 def compile_dates(requested_dates):
     for date in requested_dates:
         build_url(currency, date)
-    # get_data()
-    test()
+    build_tasks()
 
 
 # Builds the 24 unique urls needed for each day of tick data and saves those in the data_urls array 
@@ -71,56 +71,28 @@ def generate_file_name(url):
     return complete_name
 
 
-
 # Data Fetcher
-def get_data():
-    
-    for url in data_urls:
-        file_name = generate_file_name(url)
-        print(file_name)
-        try:
-            res = requests.get(url, allow_redirects=True)
-            if res.status_code == 200:
-                print('success')
-                with open(file_name, 'w') as fd:
-                    for chunk in res.iter_content(chunk_size=128):
-                        fd.write(chunk)
-            else: print(res.status_code)
-        except:
-            print('ERROR - FAILED')
-
-
-
-async def hello(url):
+async def get_data(url):
     file_name = generate_file_name(url)
     print(file_name)
     async with ClientSession() as session:
         async with session.get(url) as response:
             if response.status == 200:
-                print('all Good')
-                # print(response.status)
+                print('all good mate')
                 response = await response.read()
                 with open(file_name, 'wb') as fd:
-                    # for chunk in response(chunk_size=128):
                     fd.write(response)
-                
             else:
                 print('sorry bud')
-            # with open(file_name, 'w') as fd:
-            #     for chunk in response(chunk_size=128):
-            #         fd.write(chunk)
-            # print('here and the file was' + file_name)
-            
-            # print(response) # this is the data to save
+
 
 
 loop = asyncio.get_event_loop()
 
-tasks = []
-def test():
+def build_tasks():
     start_time = time.time()
     for url in data_urls:
-        task = asyncio.ensure_future(hello(url.format(url)))
+        task = asyncio.ensure_future(get_data(url.format(url)))
         tasks.append(task)
     loop.run_until_complete(asyncio.wait(tasks))
     print("--- %s seconds ---" % (time.time() - start_time))
