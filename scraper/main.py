@@ -1,8 +1,7 @@
 from datetime import date
 from scraper import initilize_scraper
 
-
-# Declare config caribles here before running script
+# Declare config varibles here before running the run_main script
     # Change the output_path to the path you want the file to save in
     # If None is used for the output_path the file will download in the directory where the script lives
 
