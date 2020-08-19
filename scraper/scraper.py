@@ -1,8 +1,9 @@
-import duka
 import asyncio
 import requests
 from datetime import date, timedelta
+from aiohttp import ClientSession
 import os.path
+import time
 # url = "https://datafeed.dukascopy.com/datafeed/AUDCAD/2020/07/03/04h_ticks.bi5" # WORKING EXAMPLE PATH
 url = 'https://datafeed.dukascopy.com/datafeed/PAIR/YYYY/MM/DD/HHh_ticks.bi5'
 data_urls = []
@@ -22,7 +23,8 @@ def initilize_scraper(requested_output_path, requested_currency, start_date, end
 def compile_dates(requested_dates):
     for date in requested_dates:
         build_url(currency, date)
-    get_data()
+    # get_data()
+    test()
 
 
 # Builds the 24 unique urls needed for each day of tick data and saves those in the data_urls array 
@@ -53,7 +55,7 @@ def build_dates(start_date, end_date):
     compile_dates(requested_dates)   
 
 
-#  Builds a dynamic file name for the data that will be downloaded
+#  Builds a dynamic file names for the data that will be downloaded
 def generate_file_name(url):
     pair = url.split('/')[-5]
     year = url.split('/')[-4]
@@ -69,8 +71,10 @@ def generate_file_name(url):
     return complete_name
 
 
+
 # Data Fetcher
 def get_data():
+    
     for url in data_urls:
         file_name = generate_file_name(url)
         print(file_name)
@@ -84,3 +88,39 @@ def get_data():
             else: print(res.status_code)
         except:
             print('ERROR - FAILED')
+
+
+
+async def hello(url):
+    file_name = generate_file_name(url)
+    print(file_name)
+    async with ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                print('all Good')
+                # print(response.status)
+                response = await response.read()
+                with open(file_name, 'wb') as fd:
+                    # for chunk in response(chunk_size=128):
+                    fd.write(response)
+                
+            else:
+                print('sorry bud')
+            # with open(file_name, 'w') as fd:
+            #     for chunk in response(chunk_size=128):
+            #         fd.write(chunk)
+            # print('here and the file was' + file_name)
+            
+            # print(response) # this is the data to save
+
+
+loop = asyncio.get_event_loop()
+
+tasks = []
+def test():
+    start_time = time.time()
+    for url in data_urls:
+        task = asyncio.ensure_future(hello(url.format(url)))
+        tasks.append(task)
+    loop.run_until_complete(asyncio.wait(tasks))
+    print("--- %s seconds ---" % (time.time() - start_time))
