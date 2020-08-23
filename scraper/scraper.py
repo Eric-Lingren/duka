@@ -3,12 +3,17 @@ import requests
 from datetime import date, timedelta
 from aiohttp import ClientSession
 import os.path
+import os
+import sys
 import time
-# url = "https://datafeed.dukascopy.com/datafeed/AUDCAD/2020/07/03/04h_ticks.bi5" # WORKING EXAMPLE PATH
+from tqdm import tqdm
+
+# url = "https://datafeed.dukascopy.com/datafeed/AUDCAD/2020/07/03/04h_ticks.bi5"  # WORKING EXAMPLE PATH
 url = 'https://datafeed.dukascopy.com/datafeed/PAIR/YYYY/MM/DD/HHh_ticks.bi5'
 data_urls = []
 requested_dates = []
 tasks = []
+responses = []
 
 
 
@@ -18,6 +23,8 @@ def initilize_scraper(requested_output_path, requested_currency, start_date, end
     global currency;
     currency = requested_currency
     build_dates(start_date, end_date)
+    return True
+    
 
 
 # Calls the build_url function for each day of data requested
@@ -71,20 +78,23 @@ def generate_file_name(url):
     return complete_name
 
 
+
 # Data Fetcher
 async def get_data(url):
     file_name = generate_file_name(url)
-    print(file_name)
-    async with ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                print('all good mate')
-                response = await response.read()
-                with open(file_name, 'wb') as fd:
-                    fd.write(response)
-            else:
-                print('sorry bud')
-
+    attempts = 0
+    while attempts < 5:
+        async with ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    response = await response.read()
+                    with open(file_name, 'wb') as fd:
+                        fd.write(response)
+                    attempts = 5
+                else:
+                    attempts+=1
+                responses.append(1)
+                progress_status(len(tasks), responses)
 
 
 loop = asyncio.get_event_loop()
@@ -95,4 +105,11 @@ def build_tasks():
         task = asyncio.ensure_future(get_data(url.format(url)))
         tasks.append(task)
     loop.run_until_complete(asyncio.wait(tasks))
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print("--- Finished in %s Seconds ---" % (time.time() - start_time))
+
+
+
+def progress_status(tasks, res):
+    with tqdm(total=tasks) as pbar:
+        for x in res:
+            pbar.update(1)
