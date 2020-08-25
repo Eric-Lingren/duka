@@ -104,8 +104,16 @@ def build_tasks():
     for url in data_urls:
         task = asyncio.ensure_future(get_data(url.format(url)))
         tasks.append(task)
-    loop.run_until_complete(asyncio.wait(tasks))
-    print("--- Finished in %s Seconds ---" % (time.time() - start_time))
+
+    try:
+        loop.run_until_complete(asyncio.wait(tasks))
+    except KeyboardInterrupt:
+        print("Caught keyboard interrupt. Canceling tasks...")
+    cleanup()
+    print("\n ----------------------------------------------------------------")
+    print("|              Completed in %s Seconds            |" % (time.time() - start_time))
+    print(" ----------------------------------------------------------------\n\n\n")
+
 
 
 
@@ -113,3 +121,9 @@ def progress_status(tasks, res):
     with tqdm(total=tasks) as pbar:
         for x in res:
             pbar.update(1)
+
+def cleanup():
+    tasks.clear()
+    data_urls.clear()
+    requested_dates.clear()
+    responses.clear()
