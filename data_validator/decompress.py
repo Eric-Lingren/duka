@@ -19,7 +19,7 @@ def decompress_data():
     print(df)
     return df
 
-decompress_data()
+# decompress_data()
 
 
 # DATA FORMAT:
@@ -31,3 +31,8 @@ decompress_data()
 # BIDP is a 32-bit big-endian integer representing the bidding price of the pair, multiplied by 100,000.
 # ASKV is a 32-bit big-endian floating point number representing the asking volume, divided by 1,000,000.
 # BIDV is a 32-bit big-endian floating point number representing the bidding volume, divided by 1,000,000.
+
+
+
+
+

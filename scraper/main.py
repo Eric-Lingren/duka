@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 output_path = '/Users/ericlingren/Desktop/'  
 # output_path = '/Volumes/Primary/Forex/historical-data/AUDCAD/2020/07'  
 # output_path = None  
-currency = 'AUDCAD'
+currency = 'EURUSD'
 start_date = '2020-06-01'  # First date of data requested. Format =  'YYYY-MM-DD'
 end_date = '2020-06-02'    # Last date of data requested. Format = 'YYYY-MM-DD'
 
