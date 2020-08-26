@@ -1,8 +1,10 @@
 import os
+import time
 from datetime import datetime, timedelta
 
 
 def init_file_existence(file_directory):
+    print('\n\nChecking all files for existence...')
     global path
     path = file_directory
     verify_files_exist()
@@ -73,6 +75,7 @@ def generate_expected_file_name(file, expected_year, expected_month, expected_da
 
 
 def verify_files_exist():
+    start_time = time.time()
     dir_list = os.listdir(path)
     sorted_files = sorted(dir_list)
     current_file = sorted_files[2]
@@ -92,6 +95,7 @@ def verify_files_exist():
         expected_year_string = generate_expected_year(file, expected_hour_string)
         expected_file_name = generate_expected_file_name(file, expected_year_string, expected_month_string, expected_day_string, expected_hour_string)
 
+    print(f'\nFile Checking Completed in {time.time() - start_time} Seconds')
     if file_validation_errors == 0:
         print('\n\n---------- FILE EXISTENCE COMPLETION LOG ----------\n')
         print(f'Files Checked: \n{sorted_files[2]} - {sorted_files[-1]}\n')
