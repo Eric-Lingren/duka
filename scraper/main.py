@@ -12,8 +12,8 @@ output_path = '/Users/ericlingren/Desktop/'
 # output_path = '/Volumes/Primary/Forex/historical-data/AUDCAD/2020/07'  
 # output_path = None  
 currency = 'EURUSD'
-start_date = '2020-06-01'  # First date of data requested. Format =  'YYYY-MM-DD'
-end_date = '2020-06-02'    # Last date of data requested. Format = 'YYYY-MM-DD'
+start_date = '2020-06-03'  # First date of data requested. Format =  'YYYY-MM-DD'
+end_date = '2020-06-04'    # Last date of data requested. Format = 'YYYY-MM-DD'
 
 
 def run_scraper(start_on, end_on):
