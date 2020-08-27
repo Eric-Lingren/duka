@@ -1,12 +1,19 @@
 import os
 import time
 from datetime import datetime, timedelta
+from logger import config_logger
 
-
-def init_file_existence(file_directory):
+def init_file_existence(file_directory, log_directory):
     print('\n\nChecking all files for existence...')
     global path
     path = file_directory
+
+    # Initilize logger for the file
+    global log_path
+    log_path = log_directory
+    global logger
+    logger = config_logger(log_path)
+
     verify_files_exist()
 
 
@@ -86,7 +93,8 @@ def verify_files_exist():
     for file in sorted_files[2:]:
         if file != expected_file_name:
             file_validation_errors += 1
-            error_string = error_string + f'ERROR #{file_validation_errors} --  Expected: {expected_file_name}   Received: {file} \n'
+            logger.error(f'*** MISSING FILE *** -  Expected: {expected_file_name}   Received: {file}')
+            # error_string = error_string + f'ERROR #{file_validation_errors} --  Expected: {expected_file_name}   Received: {file} \n'
             
         current_hour = file[18:20]
         expected_hour_string = generate_expected_hour(current_hour)
@@ -95,14 +103,12 @@ def verify_files_exist():
         expected_year_string = generate_expected_year(file, expected_hour_string)
         expected_file_name = generate_expected_file_name(file, expected_year_string, expected_month_string, expected_day_string, expected_hour_string)
 
-    print(f'\nFile Checking Completed in {time.time() - start_time} Seconds')
+    print(f'\nFile Checking Completed in {time.time() - start_time} Seconds\n')
     if file_validation_errors == 0:
-        print('\n\n---------- FILE EXISTENCE COMPLETION LOG ----------\n')
         print(f'Files Checked: \n{sorted_files[2]} - {sorted_files[-1]}\n')
-        print('SUCCESS - All files existed. No Errors Found. :) \n\n')
+        print('SUCCESS - All files existed. No Errors Found. :)')
     else:
-        print('\n\n---------- FILE EXISTENCE COMPLETION LOG ----------\n')
         print(f'Files Checked: \n{sorted_files[2]} - {sorted_files[-1]}\n')
-        print(f'***** FOUND {file_validation_errors} ERROR(s) - Missing the following files: *****')
-        print(f'{error_string}\n\n')
+        print(f'***** FOUND {file_validation_errors} Missing file(s). \nPlease check the log file in the directory you specified for more details.\n')
+        # print(f'{error_string}')
 

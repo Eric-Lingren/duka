@@ -3,52 +3,43 @@ import asyncio
 import lzma
 import struct
 import pandas as pd
-import numpy as np
+import time
 from datetime import datetime
-# from datetime import date, timedelta
-tasks = []
+from tqdm import tqdm
+from progress_bar import progress_bar
 
-def init_file_decompression(file_directory):
-    print('\n\nDecompressing files for data cleaning...\n')
+tasks = []
+responses = []
+
+def init_file_decompression(data_directory, output_directory):
+    print('\n\nDecompressing files and cleaning data...\n')
     global path
-    path = file_directory
+    path = data_directory
+    global output_file
+    output_file = output_directory
     start_loop()
 
 
 def start_loop():
     dir_list = os.listdir(path)
     sorted_files = sorted(dir_list)
-
-    # current_file = sorted_files[2]
-    # print(current_file)
-    # file = os.path.join(path, current_file)
-    # print(file)
-    # data_frame = decompress_data(file)
-    # print(data_frame)
-
     build_tasks(sorted_files)
 
 
 loop = asyncio.get_event_loop()
 
 def build_tasks(sorted_files):
-    # start_time = time.time()
+    start_time = time.time()
     for file in sorted_files[2:]:
         current_file = os.path.join(path, file)
         task = asyncio.ensure_future(decompress_data(current_file.format(current_file)))
         tasks.append(task)
-
     try:
         loop.run_until_complete(asyncio.wait(tasks))
     except KeyboardInterrupt:
         print("Caught keyboard interrupt. Canceling tasks...")
-    # cleanup()
-    # print("\n ----------------------------------------------------------------")
-    # print("|              Completed in %s Seconds            |" % (time.time() - start_time))
-    # print(" ----------------------------------------------------------------\n\n\n")
+    print(f'\nFile Decompression Completed in {time.time() - start_time} Seconds\n')
 
-# async def test(file):
-#     print(file)
 
 
 
@@ -66,9 +57,11 @@ async def decompress_data(file):
                 break
     df = pd.DataFrame(data)
     df.columns = ['TIME', 'ASKP', 'BIDP', 'ASKV', 'BIDV']
-    write_file(file, df)
+    res = write_file(file, df)
 
-    print('finished task')
+    responses.append(res)
+    progress_bar(tasks, responses)
+
 
 
 def write_file(file, df):
@@ -112,19 +105,13 @@ def write_file(file, df):
             df.drop(i, inplace=True)    # Remove any rows from dataframe with duplicate timestamps
         else:
             ms_time_stamp = date_ms + row[0]
-            df.at[i,'TIME'] = ms_time_stamp     # Convert timestamp into ms from epoc rathe than ms from the hour start
+            df.at[i,'TIME'] = ms_time_stamp     # Convert timestamp into ms from epoch rather than ms from the hour start
         prev_row_time = row[0]
 
-        # ask_price = row[1]/100000
-        # bid_price = row[2]/100000
-        # df.at[i,1] = ask_price
-        # df.at[i,2] = bid_price
-
     # print(df)
-    df.to_csv(r'/Users/ericlingren/Desktop/test.csv', index = False)
-
-# decompress_data()
-
+    # print('ran')
+    df.to_csv(output_file, index = False)
+    return True
 
 
 
