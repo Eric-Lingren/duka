@@ -17,9 +17,17 @@ def init_file_existence(file_directory, log_directory):
     verify_files_exist()
 
 
-def generate_expected_hour(current_hour):
-    expected_hour_int = int(current_hour)+1
-    expected_hour = ''
+def generate_expected_hour(file, current_hour):
+    current_date = file[7:17]
+    date_object = datetime.strptime(current_date, '%Y-%m-%d')
+    weekday = date_object.weekday()
+
+    if weekday == 4 and int(current_hour) == 14: # Its market close, set up for expecting next file on Sunday @ 22:00
+        expected_hour_int = int(current_hour)+8
+    else:
+        expected_hour_int = int(current_hour)+1
+        expected_hour = ''
+
     if expected_hour_int < 10:
         expected_hour = f"0{expected_hour_int}"
     elif expected_hour_int == 24:
@@ -41,7 +49,20 @@ def generate_expected_day(file, expected_hour_string):
         else:
             expected_day = f"{expected_day_int}"
     else :
-        expected_day = current_date[8:10]
+        current_date = file[7:17]
+        date_object = datetime.strptime(current_date, '%Y-%m-%d')
+        weekday = date_object.weekday()
+
+        if weekday == 4 and int(expected_hour_string) == 22: # Its market close, set up for expecting next file on Sunday @ 22:00
+            sunday_date_obj =  date_object + timedelta(days=2)
+            expected_day_int = sunday_date_obj.day
+            if expected_day_int < 10:
+                expected_day = f"0{expected_day_int}"
+            else:
+                expected_day = f"{expected_day_int}"
+        else:
+            expected_day = current_date[8:10]
+
     return expected_day
 
 
@@ -57,7 +78,20 @@ def generate_expected_month(file, expected_hour_string):
         else:
             expected_month = f"{expected_month_int}"
     else :
-        expected_month = current_date[5:7]
+        
+
+        date_object = datetime.strptime(current_date, '%Y-%m-%d')
+        weekday = date_object.weekday()
+
+        if weekday == 4 and int(expected_hour_string) == 22: # Its market close, set up for expecting next file on Sunday @ 22:00
+            sunday_date_obj =  date_object + timedelta(days=2)
+            expected_month_int = sunday_date_obj.month
+            if expected_month_int < 10:
+                expected_month = f"0{expected_month_int}"
+            else:
+                expected_month = f"{expected_month_int}"
+        else:
+            expected_month = current_date[5:7]
 
     return expected_month
 
@@ -97,7 +131,7 @@ def verify_files_exist():
             # error_string = error_string + f'ERROR #{file_validation_errors} --  Expected: {expected_file_name}   Received: {file} \n'
             
         current_hour = file[18:20]
-        expected_hour_string = generate_expected_hour(current_hour)
+        expected_hour_string = generate_expected_hour(file, current_hour)
         expected_day_string = generate_expected_day(file, expected_hour_string)
         expected_month_string = generate_expected_month(file, expected_hour_string)
         expected_year_string = generate_expected_year(file, expected_hour_string)
@@ -106,9 +140,9 @@ def verify_files_exist():
     print(f'\nFile Checking Completed in {time.time() - start_time} Seconds\n')
     if file_validation_errors == 0:
         print(f'Files Checked: \n{sorted_files[2]} - {sorted_files[-1]}\n')
-        print('SUCCESS - All files existed. No Errors Found. :)')
+        print('SUCCESS - All files existed. No Errors Found. :)\n\n')
     else:
         print(f'Files Checked: \n{sorted_files[2]} - {sorted_files[-1]}\n')
-        print(f'***** FOUND {file_validation_errors} Missing file(s). \nPlease check the log file in the directory you specified for more details.\n')
+        print(f'***** FOUND {file_validation_errors} Missing file(s). \nPlease check the log file in the directory you specified for more details.\n\n')
         # print(f'{error_string}')
 

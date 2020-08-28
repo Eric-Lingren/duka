@@ -69,6 +69,7 @@ def write_file(file, df):
     month = int(file[-19:-17])
     day = int(file[-16:-14])
     hour = int(file[-13:-11])
+
     df = df.dropna()
     df = df.sort_values(by=['TIME'])
 
@@ -108,9 +109,7 @@ def write_file(file, df):
             df.at[i,'TIME'] = ms_time_stamp     # Convert timestamp into ms from epoch rather than ms from the hour start
         prev_row_time = row[0]
 
-    # print(df)
-    # print('ran')
-    df.to_csv(output_file, index = False)
+    df.to_csv(output_file, mode='a', index = False)
     return True
 
 

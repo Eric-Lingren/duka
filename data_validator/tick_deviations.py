@@ -54,15 +54,8 @@ def build_tasks(sorted_files):
     for i in range(len(file_tick_counts)):
         ticks = file_tick_counts[i]
         if ticks < tick_mean - 1 * deviation:
-            # print('more than 1 deviation below the mean')
-            # print(ticks)
-            # print(sorted_files[i])
             deviation_violiation_count += 1
             logger.warn(f'*** LOW TICK DATA *** - {sorted_files[i]} has {ticks} ticks which is more than 1 standard deviation of {deviation} below the mean of {tick_mean} for this data set')
-    
-    # print(tick_mean)
-    # print(deviation)
-    # print(deviation_violiation_count)
 
     result = ''
     if deviation_violiation_count > 0:
@@ -70,7 +63,6 @@ def build_tasks(sorted_files):
     else:
         result = f'*** SUCCESS - There were {deviation_violiation_count} files with low statistical deviation anomalies.\n'
     print(result)
-
 
 
 
