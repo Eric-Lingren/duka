@@ -37,7 +37,7 @@ loop = asyncio.get_event_loop()
 
 def build_tasks(sorted_files):
     start_time = time.time()
-    for file in sorted_files[2:]:
+    for file in sorted_files:
         current_file = os.path.join(path, file)
         task = asyncio.ensure_future(decompress_data(current_file.format(current_file)))
         tasks.append(task)

@@ -4,7 +4,7 @@ import lzma
 import struct
 import pandas as pd
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from tqdm import tqdm
 from progress_bar import progress_bar
 
@@ -30,7 +30,7 @@ loop = asyncio.get_event_loop()
 
 def build_tasks(sorted_files):
     start_time = time.time()
-    for file in sorted_files[2:]:
+    for file in sorted_files:
         current_file = os.path.join(path, file)
         task = asyncio.ensure_future(decompress_data(current_file.format(current_file)))
         tasks.append(task)
@@ -57,6 +57,7 @@ async def decompress_data(file):
                 break
     df = pd.DataFrame(data)
     df.columns = ['TIME', 'ASKP', 'BIDP', 'ASKV', 'BIDV']
+    
     res = write_file(file, df)
 
     responses.append(res)
@@ -70,8 +71,10 @@ def write_file(file, df):
     day = int(file[-16:-14])
     hour = int(file[-13:-11])
 
+    df = df.drop(columns=['ASKV', 'BIDV'])
     df = df.dropna()
     df = df.sort_values(by=['TIME'])
+
 
     # SAMPLE DATAFRAME FOR TESTING SMALL SETS:
     # df2 = pd.DataFrame(np.array([[1, 2, 3], [2, 5, 6], [1, 8, 9]]),
@@ -97,19 +100,36 @@ def write_file(file, df):
 
 
     file_date_object = datetime(year, month, day, hour)             # Build date object from integers in file name
-    epoch = datetime.utcfromtimestamp(0)                            # Build Epoch
-    date_ms = (file_date_object - epoch).total_seconds() * 1000.0   # Build fime timestamp in ms from epoch
     prev_row_time = ''  # Used from comparing current column to prev column in loop below
 
+    print(file_date_object)
     for i, row in df.iterrows():
         if prev_row_time == row[0]:
             df.drop(i, inplace=True)    # Remove any rows from dataframe with duplicate timestamps
         else:
-            ms_time_stamp = date_ms + row[0]
-            df.at[i,'TIME'] = ms_time_stamp     # Convert timestamp into ms from epoch rather than ms from the hour start
-        prev_row_time = row[0]
+            time_stamp = file_date_object + timedelta(milliseconds=int(row[0]))
+            df.at[i,'TIME'] = time_stamp
+            # print(fulldate)
 
-    df.to_csv(output_file, mode='a', index = False)
+            # print(row[1])
+            ask = row[1]/100000     # Convert ASK price into decimal
+            # print(ask)
+            df.ASKP = df.ASKP.astype('float64') 
+            df.at[i,'ASKP'] = ask
+            # print(df)
+
+            bid = row[2]/100000     # Convert BID price into decimal
+            df.BIDP = df.BIDP.astype('float64') 
+            df.at[i,'BIDP'] = bid
+        # print(row)
+        prev_row_time = row[0]
+    
+    # df['BIDP'] = pd.to_float64(df.BIDP)
+    df['TIME'] = pd.to_datetime(df.TIME)
+    # print(df)
+    # df['BIDP'] = pd.to_float64(df.BIDP)
+
+    df.to_csv(output_file, float_format='%g', date_format='%Y-%m-%d %H:%M:%S:%f', mode='a', header=False, index=False)
     return True
 
 

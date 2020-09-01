@@ -6,13 +6,13 @@ from tick_deviations import init_tick_deviations
 
 # DECLARE CONFIG VARIBLES HERE BEFORE RUNNING THE INIT_VALIDATOR SCRIPT :
     # Location where the data files are stored:
-data_directory = '/Volumes/Primary/Forex/historical-data/EURUSD/2020'  
+data_directory = '/Volumes/External/test-data/2020-1'  
     # Location where you would like the log output file: 
         # Place in a differnt location from the data files to avoid problems.
 log_directory = '/Users/ericlingren/Documents'  
     # Location where you would like the uncompressed ticks CSV File to be saved:
         # Place in a differnt location from the data files to avoid problems.
-data_output_directory = '/Volumes/Primary/Forex/historical-data/EURUSD/EURUSD-clean-data.csv' 
+data_output_directory = '/Volumes/External/test-data/test-2020-1.csv' 
 
 ## Alternative Sample Paths
 # '/Volumes/Primary/Forex/historical-data/EURUSD/2020/'  
@@ -40,7 +40,6 @@ def init_validator():
 
 
     ## These are quick function shortcuts that can be used to bypas the user input full scripts above
-    # init_file_decompression(data_directory, data_output_directory)
     # init_tick_deviations(data_directory, log_directory)
     # init_file_size_check(data_directory)
     # init_file_decompression(data_directory, data_output_directory)

@@ -119,12 +119,12 @@ def verify_files_exist():
     start_time = time.time()
     dir_list = os.listdir(path)
     sorted_files = sorted(dir_list)
-    current_file = sorted_files[2]
+    current_file = sorted_files[0]
     expected_file_name = current_file
     file_validation_errors = 0
-    error_string = ''
 
-    for file in sorted_files[2:]:
+
+    for file in sorted_files:
         if file != expected_file_name:
             file_validation_errors += 1
             logger.error(f'*** MISSING FILE *** -  Expected: {expected_file_name}   Received: {file}')
@@ -139,10 +139,10 @@ def verify_files_exist():
 
     print(f'\nFile Checking Completed in {time.time() - start_time} Seconds\n')
     if file_validation_errors == 0:
-        print(f'Files Checked: \n{sorted_files[2]} - {sorted_files[-1]}\n')
+        print(f'Files Checked: \n{sorted_files[0]} - {sorted_files[-1]}\n')
         print('SUCCESS - All files existed. No Errors Found. :)\n\n')
     else:
-        print(f'Files Checked: \n{sorted_files[2]} - {sorted_files[-1]}\n')
+        print(f'Files Checked: \n{sorted_files[0]} - {sorted_files[-1]}\n')
         print(f'***** FOUND {file_validation_errors} Missing file(s). \nPlease check the log file in the directory you specified for more details.\n\n')
         # print(f'{error_string}')
 
