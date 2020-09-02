@@ -7,6 +7,7 @@ import time
 from datetime import datetime, timedelta
 from tqdm import tqdm
 from progress_bar import progress_bar
+from multiprocessing import Pool
 
 tasks = []
 responses = []
@@ -28,12 +29,17 @@ def start_loop():
 
 loop = asyncio.get_event_loop()
 
+
+
 def build_tasks(sorted_files):
     start_time = time.time()
+
     for file in sorted_files:
         current_file = os.path.join(path, file)
         task = asyncio.ensure_future(decompress_data(current_file.format(current_file)))
         tasks.append(task)
+
+        
     try:
         loop.run_until_complete(asyncio.wait(tasks))
     except KeyboardInterrupt:
@@ -131,6 +137,14 @@ def write_file(file, df):
 
     df.to_csv(output_file, float_format='%g', date_format='%Y-%m-%d %H:%M:%S:%f', mode='a', header=False, index=False)
     return True
+
+
+
+# pool = multiprocessing.Pool(multiprocessing.cpu_count())
+# for current_task in tasks:
+#     pool.apply_async(decompress_data, (current_file.format(current_file)))
+# pool.close()
+# pool.join()
 
 
 

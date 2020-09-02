@@ -4,9 +4,12 @@ import pandas as pd
 import tables
 import time
 
+
 # input_filename = '/Users/ericlingren/Documents/EURUSD-clean-data.csv'
-input_filename = '/Volumes/External/test-data/test-2020-1.csv'
-output_filename = '/Volumes/External/test-data/test.h5'
+# input_filename = '/Volumes/External/test-data/week-1.csv'
+input_filename = '/Users/ericlingren/Desktop/week-2.csv'
+output_filename = '/Users/ericlingren/Desktop/week-2.h5'
+# output_filename = '/Volumes/External/test-data/week-1.h5'
 
 
 start_time = time.time()
