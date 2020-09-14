@@ -1,6 +1,7 @@
 import asyncio
 import requests
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+import pytz
 from aiohttp import ClientSession
 import os.path
 import os
@@ -20,7 +21,7 @@ responses = []
 
 
 
-def initilize_scraper(requested_output_path, requested_currency, start_date, end_date):
+def initilize_tick_scraper(requested_output_path, requested_currency, start_date, end_date):
     global output_path
     output_path = requested_output_path
     global currency;
@@ -37,6 +38,13 @@ def compile_dates(requested_dates):
         build_url(currency, date)
     build_tasks()
 
+def is_dst(date):
+    tz = pytz.timezone('US/Eastern')
+    # date = datetime(2020, 8, 1)
+    now = pytz.utc.localize(date)
+    return now.astimezone(tz).dst() != timedelta(0)
+
+
 
 # Builds the 24 unique urls needed for each day of tick data and saves those in the data_urls array 
 def build_url(pair, date):
@@ -44,13 +52,32 @@ def build_url(pair, date):
     hours = list(range(24))
 
     if weekday == 4:
-        del hours[15:]  # Its Friday, market closes at 15:00 - dont include any files after that time
+        if(is_dst(date) == False):   # Its not day light savings Friday, market closes at 2200 gmt
+            del hours[22:]  
+        else:   # It is not day light savings on Sunday, market opens at 2100 gmt
+            del hours[21:] 
     if weekday == 6:
-        del hours[:22]  # Its Sunday, market opens at 22:00GMT - dont include any files before that time
+        if(is_dst(date) == False):   # Its not day light savings on Sunday (ie Jan), market opens at 2200 gmt
+            del hours[:22]  # Dont include any files before 2200 gmt
+        else:   # It is daylight savings on Sunday (ie. July), market opens at 2100 gmt
+            del hours[:21]  # Dont include any files before 2100 gmt
+
+    newyears_day = datetime(date.year, 1, 1)
+    if date == newyears_day:
+        del hours[:22] #  Its new years day and market opens at 2200 GMT
+
+    christmas = datetime(date.year, 12, 25)
+    if date == christmas:
+        del hours[8:22] #  Its christmas and market is closed from GMT 0800 - 2200
+
+    newyears_eve = datetime(date.year, 12, 31)
+    if date == newyears_eve:
+        del hours[22:] #  Its new years eve and market closes at GMT 2200
+
 
     month_int = int(date.month)-1
     year = f'{date.year}'
-    month = f'{month_int}' if date.month > 9 else f'0{month_int}' 
+    month = f'{month_int}' if date.month > 10 else f'0{month_int}' 
     day = f'{date.day}' if date.day > 9 else f'0{date.day}' 
     hour = None
 
@@ -225,4 +252,5 @@ def test_download(url):
     #                 attempts+=1
     #             responses.append(1)
     #             progress_status(len(tasks), responses)
+
 

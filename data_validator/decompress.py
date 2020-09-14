@@ -63,7 +63,7 @@ async def decompress_data(file):
                 break
     df = pd.DataFrame(data)
     df.columns = ['TIME', 'ASKP', 'BIDP', 'ASKV', 'BIDV']
-    
+    # df.columns = ['OPEN', 'HIGH', 'LOW', 'CLOSE', 'VOLUME']
     res = write_file(file, df)
 
     responses.append(res)
@@ -108,26 +108,18 @@ def write_file(file, df):
     file_date_object = datetime(year, month, day, hour)             # Build date object from integers in file name
     prev_row_time = ''  # Used from comparing current column to prev column in loop below
 
-    print(file_date_object)
     for i, row in df.iterrows():
         if prev_row_time == row[0]:
             df.drop(i, inplace=True)    # Remove any rows from dataframe with duplicate timestamps
         else:
             time_stamp = file_date_object + timedelta(milliseconds=int(row[0]))
             df.at[i,'TIME'] = time_stamp
-            # print(fulldate)
-
-            # print(row[1])
             ask = row[1]/100000     # Convert ASK price into decimal
-            # print(ask)
             df.ASKP = df.ASKP.astype('float64') 
             df.at[i,'ASKP'] = ask
-            # print(df)
-
             bid = row[2]/100000     # Convert BID price into decimal
             df.BIDP = df.BIDP.astype('float64') 
             df.at[i,'BIDP'] = bid
-        # print(row)
         prev_row_time = row[0]
     
     # df['BIDP'] = pd.to_float64(df.BIDP)

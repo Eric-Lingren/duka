@@ -7,8 +7,8 @@ import time
 
 # input_filename = '/Users/ericlingren/Documents/EURUSD-clean-data.csv'
 # input_filename = '/Volumes/External/test-data/week-1.csv'
-input_filename = '/Users/ericlingren/Desktop/week-2.csv'
-output_filename = '/Users/ericlingren/Desktop/week-2.h5'
+input_filename = '/Users/ericlingren/Desktop/EURUSD-2019-1Min.csv'
+output_filename = '/Users/ericlingren/Desktop/EURUSD-2019-1Min.h5'
 # output_filename = '/Volumes/External/test-data/week-1.h5'
 
 
@@ -19,7 +19,8 @@ df = pd.read_csv(input_filename)
 # print(df)
 
 
-df.columns = ['TIME', 'ASKP', 'BIDP']
+# df.columns = ['TIME', 'ASKP', 'BIDP'] # For Tick Data
+df.columns = ['TIME', 'OPEN', 'HIGH', 'LOW', "CLOSE"]  # For 1 min or greater data
 df.set_index('TIME', inplace=True)
 
 start_index = input_filename.rfind('/')+1

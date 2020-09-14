@@ -5,7 +5,7 @@ import time
 import datetime
 
 
-# hdf5_filename = '/Volumes/External/test-data/week-1.h5'
+#HDF5 File loading doesnt work from external volumes
 hdf5_filename = '/Users/ericlingren/Desktop/week-1.h5'
 hdf5_filename2 = '/Users/ericlingren/Desktop/week-2.h5'
 
@@ -44,18 +44,18 @@ with pd.HDFStore(hdf5_filename) as hdf:
 # print(df.tail())
 
 
-# Obtain only a specific date range from the hdf 
-start_date = '2020-01-02'
-end_date = '2020-01-03'
+# # Obtain only a specific date range from the hdf 
+# start_date = '2020-01-02'
+# end_date = '2020-01-03'
 
-start_date = str(pd.Timestamp(start_date))
-end_date = str(pd.Timestamp(end_date))
+# start_date = str(pd.Timestamp(start_date))
+# end_date = str(pd.Timestamp(end_date))
 
-query = 'index>"' + start_date + '" & index<"' + end_date + '"'
+# query = 'index>"' + start_date + '" & index<"' + end_date + '"'
 
-df = pd.read_hdf(hdf5_filename, where=query)
-print(df.head())
-print(df.tail())
+# df = pd.read_hdf(hdf5_filename, where=query)
+# print(df.head())
+# print(df.tail())
 
 
 

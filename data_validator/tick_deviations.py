@@ -53,13 +53,13 @@ def build_tasks(sorted_files):
     global deviation_violiation_count
     for i in range(len(file_tick_counts)):
         ticks = file_tick_counts[i]
-        if ticks < tick_mean - 1 * deviation:
+        if ticks < tick_mean - 1.5 * deviation:
             deviation_violiation_count += 1
-            logger.warn(f'*** LOW TICK DATA *** - {sorted_files[i]} has {ticks} ticks which is more than 1 standard deviation of {deviation} below the mean of {tick_mean} for this data set')
+            logger.warn(f'*** LOW TICK DATA *** - {sorted_files[i]} has {ticks} ticks which is more than 1.5 standard deviations of {deviation} below the mean of {tick_mean} for this data set')
 
     result = ''
     if deviation_violiation_count > 0:
-        result = f'***** WARNING ***** \nThere were {deviation_violiation_count} files found with tick data counts more than 1 standard deviation below the mean. \n\n     Mean Ticks per file in this data set : {tick_mean} \n     Standard Deviation for this data set : {deviation} \n\nThis could potentially be an indication of gaps in the data set. \nIt is recommended the logs be examined for more details. \n'
+        result = f'***** WARNING ***** \nThere were {deviation_violiation_count} files found with tick data counts more than 1.5 standard deviations below the mean. \n\n     Mean Ticks per file in this data set : {tick_mean} \n     Standard Deviation for this data set : {deviation} \n\nThis could potentially be an indication of gaps in the data set. \nIt is recommended the logs be examined for more details. \n'
     else:
         result = f'*** SUCCESS - There were {deviation_violiation_count} files with low statistical deviation anomalies.\n'
     print(result)
