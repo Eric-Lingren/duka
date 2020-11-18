@@ -27,7 +27,6 @@ def initilize_tick_scraper(requested_output_path, requested_currency, start_date
     global currency;
     currency = requested_currency
     build_dates(start_date, end_date)
-    # test_download('https://datafeed.dukascopy.com/datafeed/EURUSD/2020/01/02/22h_ticks.bi5')
     return True
     
 
@@ -74,24 +73,24 @@ def build_url(pair, date):
     if date == newyears_eve:
         del hours[22:] #  Its new years eve and market closes at GMT 2200
 
-
     month_int = int(date.month)-1
     year = f'{date.year}'
     month = f'{month_int}' if date.month > 10 else f'0{month_int}' 
     day = f'{date.day}' if date.day > 9 else f'0{date.day}' 
     hour = None
+    if len(hours) > 0:
+        for i in hours:
+            if i < 10:
+                hour = f'0{i}'
+            else:
+                hour = f'{i}'
+            new_url = url.replace('PAIR', pair)
+            new_url = new_url.replace('YYYY', year)
+            new_url = new_url.replace('MM', month)
+            new_url = new_url.replace('DD', day)
+            new_url = new_url.replace('HH', hour)
+            data_urls.append(new_url)
 
-    for i in hours:
-        if i < 10:
-            hour = f'0{i}'
-        else:
-            hour = f'{i}'
-        new_url = url.replace('PAIR', pair)
-        new_url = new_url.replace('YYYY', year)
-        new_url = new_url.replace('MM', month)
-        new_url = new_url.replace('DD', day)
-        new_url = new_url.replace('HH', hour)
-        data_urls.append(new_url)
 
 
 #  Collates all the dates that will be required to build the array of urls
@@ -168,6 +167,8 @@ async def get_data(url):
 loop = asyncio.get_event_loop()
 
 def build_tasks():
+    if len(data_urls) == 0:
+        return
     start_time = time.time()
     for url in data_urls:
         task = asyncio.ensure_future(get_data(url.format(url)))
@@ -194,63 +195,3 @@ def cleanup():
     data_urls.clear()
     requested_dates.clear()
     responses.clear()
-
-
-
-# Data Fetcher
-def test_download(url):
-    file_name = generate_file_name(url)
-    # attempts = 0
-    # print(url)
-    # # loop = asyncio.get_event_loop()
-    # # buffer = BytesIO()
-
-
-    # r = requests.get(url)
-    # print(r)
-    # print(r.status_code)
-    # # data = r.json()
-    # print(r.headers["content-type"])
-    # x = urllib.request.urlopen(url)
-    # print(x.read())
-    u = urllib.request.urlopen(url)
-    f = open(file_name, 'wb')
-    meta = u.info()
-    print(meta)
-    # file_size = int(meta.getheaders("Content-Length")[0])
-    # print(file_size)
-    # print("Downloading: %s Bytes: %s" % (file_name, file_size))
-
-    # file_size_dl = 0
-    block_sz = 8192
-    while True:
-        buffer = u.read(block_sz)
-        print(buffer)
-        if not buffer:
-            break
-
-    #     file_size_dl += len(buffer)
-    #     f.write(buffer)
-    #     status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-    #     status = status + chr(8)*(len(status)+1)
-    #     print(status)
-
-    # f.close()
-
-
-    # while attempts < 5:
-    #     async with ClientSession() as session:
-    #         async with session.get(url) as response:
-                
-    #             if response.status == 200:
-    #                 data = await response.read()
-    #                 print(data)
-    #                 with open(file_name, 'wb') as fd:
-    #                     fd.write(data)
-    #                 attempts = 5
-    #             else:
-    #                 attempts+=1
-    #             responses.append(1)
-    #             progress_status(len(tasks), responses)
-
-

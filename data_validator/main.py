@@ -7,13 +7,16 @@ from tick_deviations import init_tick_deviations
 
 # DECLARE CONFIG VARIBLES HERE BEFORE RUNNING THE INIT_VALIDATOR SCRIPT :
     # Location where the data files are stored:
-data_directory = '/Volumes/Primary/Trading/historical-data/forex/EURUSD/2017/ticks'  
+# data_directory = '/Volumes/Primary/Trading/historical-data/forex/USDCHF/2019/ticks'  
+data_directory = '/Volumes/External/EURUSD/2020/ticks'  
     # Location where you would like the log output file: 
         # Place in a differnt location from the data files to avoid problems.
-log_directory = '/Volumes/Primary/Trading/historical-data/forex/EURUSD/2017'  
+# log_directory = '/Volumes/Primary/Trading/historical-data/forex/USDCHF/2019/'  
+log_directory = '/Volumes/External/EURUSD/2020/'  
     # Location where you would like the uncompressed ticks CSV File to be saved:
         # Place in a differnt location from the data files to avoid problems.
-data_output_directory = '/Volumes/Primary/Trading/historical-data/forex/EURUSD/2017/EURUSD-2017-ticks.csv' 
+# data_output_directory = '/Volumes/Primary/Trading/historical-data/forex/USDCHF/2019/USDCHF-2019-ticks.csv' 
+data_output_directory = '/Volumes/External/EURUSD/2020/EURUSD-2020-ticks.csv' 
 timeframe = 'tick'    # Choose either 'tick' or 'bar'
 
 ## Alternative Sample Paths
@@ -114,4 +117,5 @@ init_validator()
 # if __name__ == '__main__':
 #     with Pool(5) as p:
 #         p.map(decompress_data, sorted_files)
+
 

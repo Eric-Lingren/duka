@@ -9,13 +9,11 @@ from bar_scraper import initilize_bar_scraper
     # Change the output_path to the location you want the data files saved to
     # If None is used for the output_path the file will download in the directory where the script lives
 
-output_path = '/Volumes/Primary/Trading/historical-data/forex/EURUSD/2017/ticks'  
-# Other sample paths:
-    # output_path = '/Users/ericlingren/Desktop/'  
-    # output_path = None  
+# output_path = '/Volumes/Primary/Trading/historical-data/forex/USDCHF/2019/ticks'  
+output_path = '/Volumes/External/EURUSD/2020/ticks'  
 currency = 'EURUSD'
-start_date = '2017-01-01'  # First date of data requested. Format =  'YYYY-MM-DD'
-end_date = '2017-01-02'    # Last date of data requested. Format = 'YYYY-MM-DD'
+start_date = '2020-01-01'  # First date of data requested. Format =  'YYYY-MM-DD'
+end_date = '2020-03-31'    # Last date of data requested. Format = 'YYYY-MM-DD'
 timeframe = 'tick'    # tick, min_1, etc
 
 
