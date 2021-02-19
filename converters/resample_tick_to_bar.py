@@ -6,9 +6,11 @@ import tables
 import time
 
 ## Set Variables Here
-pair = 'EURUSD'
-year = '2020'
-base_folder = '/Volumes/External/' + pair + '/' + year + '/'
+pair = 'USDJPY'
+year = '2016'
+
+
+base_folder = '/Volumes/External/Trading/historical-data/forex/' + pair + '/' + year + '/'
 input_filename = pair + '-' + year + '-ticks.csv'
 input_data = base_folder + input_filename
 timeframes = ['1Min', '5Min', '15Min', '30Min', '60Min', '1D', '1W', '1M']

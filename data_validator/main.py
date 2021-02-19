@@ -6,23 +6,15 @@ from decompress import init_file_decompression
 from tick_deviations import init_tick_deviations
 
 # DECLARE CONFIG VARIBLES HERE BEFORE RUNNING THE INIT_VALIDATOR SCRIPT :
-    # Location where the data files are stored:
-# data_directory = '/Volumes/Primary/Trading/historical-data/forex/USDCHF/2019/ticks'  
-data_directory = '/Volumes/External/EURUSD/2020/ticks'  
-    # Location where you would like the log output file: 
-        # Place in a differnt location from the data files to avoid problems.
-# log_directory = '/Volumes/Primary/Trading/historical-data/forex/USDCHF/2019/'  
-log_directory = '/Volumes/External/EURUSD/2020/'  
-    # Location where you would like the uncompressed ticks CSV File to be saved:
-        # Place in a differnt location from the data files to avoid problems.
-# data_output_directory = '/Volumes/Primary/Trading/historical-data/forex/USDCHF/2019/USDCHF-2019-ticks.csv' 
-data_output_directory = '/Volumes/External/EURUSD/2020/EURUSD-2020-ticks.csv' 
-timeframe = 'tick'    # Choose either 'tick' or 'bar'
+pair = 'USDJPY'
+year = '2016' 
 
-## Alternative Sample Paths
-# '/Volumes/Primary/Forex/historical-data/EURUSD/2020/'  
-# /Users/ericlingren/Desktop
-# '/Users/ericlingren/Documents/test.csv'
+
+base_path = '/Volumes/External/Trading/historical-data/forex/' + pair + '/' + year + '/' 
+data_directory = base_path + 'ticks' # Location where the data files are stored
+log_directory = base_path  # Location where you would like the log output file
+data_output_directory = base_path + pair + '-' + year + '-ticks.csv' # Location where you would like the uncompressed ticks CSV File to be saved
+timeframe = 'tick'  
 
 
 

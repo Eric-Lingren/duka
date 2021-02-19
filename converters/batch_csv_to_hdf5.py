@@ -1,19 +1,15 @@
 import os
 import sys
-import pandas as pd
-import tables
 import time
+import tables
+import pandas as pd
 
+## GLOBAL VARIBLES THAT CAN BE CHANGED BY THE USER:
 equity = 'EURUSD'
 year = '2021'
-
 base_path = '/Volumes/External/Trading/historical-data/forex/'
-# input_filename = '/Users/ericlingren/Desktop/EURUSD-2019-1Min.csv'
-# output_filename = '/Users/ericlingren/Desktop/EURUSD-2019-1Min.h5'
-# input_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2019/EURUSD-2019-1Min.csv'
-# output_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2019/EURUSD-2019-1Min.h5'
-# input_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2018/EURUSD-2018-1Min.csv'
-# output_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2018/EURUSD-2018-1Min.h5'
+
+
 
 
 start_time = time.time()
@@ -31,24 +27,26 @@ for file in all_dir_files:
 
 def convert_file(input_filepath, output_filepath):
     print(' ')
-    print(input_filepath)
-    print(output_filepath)
+    print(f'---------  CURRENTLY PROCESSING: {input_filepath}  -----------')
 
     df = pd.read_csv(input_filepath)
 
-    # df.columns = ['TIME', 'ASKP', 'BIDP'] # For Tick Data
-    df.columns = ['TIME', 'OPEN', 'HIGH', 'LOW', "CLOSE"]  # For 1 min or greater data
-    df.set_index('TIME', inplace=True)
+    is_tick_data = 'ticks' in input_filepath
+    if is_tick_data: # For Tick Data
+        df.columns = ['TIME', 'ASKP', 'BIDP'] 
+    elif not is_tick_data: # For 1 min or greater data
+        df.columns = ['TIME', 'OPEN', 'HIGH', 'LOW', "CLOSE"]  
 
+    # Set databse indexes
+    df.set_index('TIME', inplace=True)
     start_index = input_filepath.rfind('/')+1
     end_index = input_filepath.rfind('.')
     name = input_filepath[start_index:end_index]
     name = name.replace('-', '_')
-    key = 'FX_' + name + '_tick'
+    key = 'FX_' + name
 
     # Write initial data to the database
     store = pd.HDFStore(output_filepath)
-
     store.put(  key, 
                 df,
                 format='table',
@@ -84,6 +82,8 @@ def build_file_names():
     for file in csv_files:
         input_filepath = f'{folder}/{file}'
         output_filepath = input_filepath.replace('.csv', '.h5')
+
+        
         
         try:
             convert_file(input_filepath, output_filepath)
@@ -146,4 +146,4 @@ build_file_names()
 #     print('Try Again')
 
 
-# print("Completed in %s Seconds" % (time.time() - start_time))
+print("Completed in %s Seconds" % (time.time() - start_time))

@@ -5,9 +5,12 @@ import time
 import datetime
 
 
-#HDF5 File loading doesnt work from external volumes
-hdf5_filename = '/Users/ericlingren/Desktop/week-1.h5'
-hdf5_filename2 = '/Users/ericlingren/Desktop/week-2.h5'
+# hdf5_filename = '/Users/ericlingren/Desktop/week-1.h5'
+# hdf5_filename2 = '/Users/ericlingren/Desktop/week-2.h5'
+# hdf5_filename = '/Users/ericlingren/Desktop/EURUSD-2019-1D.h5'
+# hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2019/EURUSD-2019-1Min.h5'
+# hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2018/EURUSD-2018-1Min.h5'
+hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2021/EURUSD-2019-ticks.h5'
 
 
 start_time = time.time()
@@ -22,10 +25,11 @@ with pd.HDFStore(hdf5_filename) as hdf:
 
 
 # # Reads a HDF5 datastore with only one dataset
-# df = pd.read_hdf(hdf5_filename)
-# # print(df.tail())
-# # print(df.iloc[0].index)
+df = pd.read_hdf(hdf5_filename)
+print(df.tail())
+# print(df.iloc[0].index)
 # print(type(df.index[0]))
+# print(df.index[0])
 
 
 # # Reads a portion of a HDF5 datastore with multiple datasets
