@@ -30,7 +30,19 @@ async def check_size(file):
     file_size = os.path.getsize(file)
     
     if file_size == 0:
-        logger.error(f'*** NO FILE DATA *** - {file} has no data and will fail decompression')
+        logger.warning(f'*** NO FILE DATA *** - {file} has no data and will fail decompression')
+        print('******  WARNING  ****** - The following file has no data and will fail decompression:')
+        print(file)
+        
+        val = input("\n Would you like to delete it? (y/n): ")
+        if val == 'y':
+            try:
+                os.remove(file)
+                print("\nFile was successfully deleted.\n\n")
+                logger.info(f'*** FILE SUCCESSFULLY DELETED *** - {file} has been deleted')
+            except:
+                print("\nAttempted file deletion failed.  Please manually remove it.\n\n")
+                logger.info(f'*** FILE FAILED DELETION *** - {file} was unable to be deleted')
         global error_count
         error_count = error_count+1
         

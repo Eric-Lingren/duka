@@ -10,7 +10,8 @@ import datetime
 # hdf5_filename = '/Users/ericlingren/Desktop/EURUSD-2019-1D.h5'
 # hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2019/EURUSD-2019-1Min.h5'
 # hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2018/EURUSD-2018-1Min.h5'
-hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2021/EURUSD-2019-ticks.h5'
+# hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2021/h5/USDJPY-2020-1M.h5'
+hdf5_filename = '/Volumes/External/Trading/historical-data/forex/GBPUSD/2015/h5/GBPUSD-2015-1W.h5'
 
 
 start_time = time.time()
@@ -27,6 +28,10 @@ with pd.HDFStore(hdf5_filename) as hdf:
 # # Reads a HDF5 datastore with only one dataset
 df = pd.read_hdf(hdf5_filename)
 print(df.tail())
+
+count_row = df.shape[0]
+print(count_row)
+
 # print(df.iloc[0].index)
 # print(type(df.index[0]))
 # print(df.index[0])

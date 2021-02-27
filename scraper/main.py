@@ -1,21 +1,23 @@
-from datetime import date
-import asyncio
-from datetime import datetime, timedelta
 from tqdm import tqdm
-from tick_scraper import initilize_tick_scraper
+import asyncio
+from datetime import date
+from datetime import datetime, timedelta
 from bar_scraper import initilize_bar_scraper
+from tick_scraper import initilize_tick_scraper
 
 # Declare config varibles here before running the run_main script
-    # Change the output_path to the location you want the data files saved to
-    # If None is used for the output_path the file will download in the directory where the script lives
+    # Can also change the output_path to the location you want the data files saved to 
 
-# output_path = '/Volumes/Primary/Trading/historical-data/forex/USDCHF/2019/ticks'  
-output_path = '/Volumes/External/Trading/historical-data/forex/EURUSD/2016/ticks'  
-# output_path = '/Volumes/External/EURUSD/2020/ticks'  
-currency = 'EURUSD'
-start_date = '2020-01-01'  # First date of data requested. Format =  'YYYY-MM-DD'
-end_date = '2020-12-31'    # Last date of data requested. Format = 'YYYY-MM-DD'
-timeframe = 'tick'    # tick, min_1, etc
+# DECLARE CONFIG VARIBLES HERE BEFORE RUNNING THE INIT_VALIDATOR SCRIPT :
+currency = 'EURNZD'
+year = '2016' 
+
+
+
+output_path = '/Volumes/External/Trading/historical-data/forex/' + currency + '/' + year + '/raw-download-data' 
+start_date = f'{year}-01-01'  # First date of data requested. Format =  'YYYY-MM-DD'
+end_date = f'{year}-12-31'    # Last date of data requested. Format = 'YYYY-MM-DD'
+timeframe = 'tick'    # tick, min_1, etc  ## USE TICK!
 
 
 def run_scraper(start_on, end_on, task_count):
@@ -26,7 +28,7 @@ def run_scraper(start_on, end_on, task_count):
             start_on,
             end_on
         )
-    else:
+    else: # Doest work and isnt optimized with duka.  Download in tick data and resample to other timeframes instead.
         res = initilize_bar_scraper(
             output_path,
             currency,  

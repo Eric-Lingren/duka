@@ -8,6 +8,7 @@ def init_file_existence_ticks(file_directory, log_directory):
     print('\n\nChecking all files for existence...')
     global path
     path = file_directory
+    print(path)
 
     # Initilize logger for the file
     global log_path

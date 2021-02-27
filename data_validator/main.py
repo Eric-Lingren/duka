@@ -1,21 +1,24 @@
 import pandas as pd
-from file_existence_tick_data import init_file_existence_ticks
-from file_existence_bar_data import init_file_existence_bars
 from file_size import init_file_size_check
 from decompress import init_file_decompression
+from improved_decompress import init_improved_decompress
 from tick_deviations import init_tick_deviations
+from file_existence_bar_data import init_file_existence_bars
+from file_existence_tick_data import init_file_existence_ticks
+
+
 
 # DECLARE CONFIG VARIBLES HERE BEFORE RUNNING THE INIT_VALIDATOR SCRIPT :
-pair = 'USDJPY'
-year = '2016' 
+pair = 'EURNZD'
+year = '2020' 
+
 
 
 base_path = '/Volumes/External/Trading/historical-data/forex/' + pair + '/' + year + '/' 
-data_directory = base_path + 'ticks' # Location where the data files are stored
+data_directory = base_path + 'raw-download-data' # Location where the data files are stored
 log_directory = base_path  # Location where you would like the log output file
 data_output_directory = base_path + pair + '-' + year + '-ticks.csv' # Location where you would like the uncompressed ticks CSV File to be saved
 timeframe = 'tick'  
-
 
 
 def init_validator():
@@ -39,15 +42,26 @@ def init_validator():
             if val != 'y':
                 print("\nProgram Terminating.\n")
             else:
-                init_file_decompression(data_directory, data_output_directory)
+                init_improved_decompress(data_directory, data_output_directory)
+                # init_file_decompression(data_directory, data_output_directory)
 
     ## These are quick function shortcuts that can be used to bypas the user input full scripts above:
     # init_file_existence_ticks(data_directory, log_directory)
     # init_tick_deviations(data_directory, log_directory)
     # init_file_size_check(data_directory, log_directory)
     # init_file_decompression(data_directory, data_output_directory)
+    # init_improved_decompress(data_directory, data_output_directory)
 
-init_validator()
+
+# init_validator()
+
+
+def main():
+    init_validator()
+
+
+if __name__ == '__main__':
+    main()
 
 
 
