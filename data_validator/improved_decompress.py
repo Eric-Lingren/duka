@@ -5,7 +5,7 @@ import struct
 import pandas as pd
 from glob import glob
 from datetime import datetime
-from progress_bar import progress_bar
+from .progress_bar import progress_bar
 
 
 

@@ -5,7 +5,7 @@ import tables
 import pandas as pd
 
 ## GLOBAL VARIBLES THAT CAN BE CHANGED BY THE USER:
-equity = 'AUDJPY'
+equity = 'EURNZD'
 # years = ['2020']
 years = ['2020', '2019', '2018', '2017', '2016']
 base_path = '/Volumes/External/Trading/historical-data/forex/'

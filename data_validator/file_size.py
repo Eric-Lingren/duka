@@ -2,7 +2,7 @@ import os
 import asyncio
 import logging
 import time
-from logger import config_logger
+from .logger import config_logger
 tasks = []
 error_count = 0
 
@@ -31,18 +31,18 @@ async def check_size(file):
     
     if file_size == 0:
         logger.warning(f'*** NO FILE DATA *** - {file} has no data and will fail decompression')
-        print('******  WARNING  ****** - The following file has no data and will fail decompression:')
-        print(file)
+        # print('******  WARNING  ****** - The following file has no data and will fail decompression:')
+        # print(file)
         
-        val = input("\n Would you like to delete it? (y/n): ")
-        if val == 'y':
-            try:
-                os.remove(file)
-                print("\nFile was successfully deleted.\n\n")
-                logger.info(f'*** FILE SUCCESSFULLY DELETED *** - {file} has been deleted')
-            except:
-                print("\nAttempted file deletion failed.  Please manually remove it.\n\n")
-                logger.info(f'*** FILE FAILED DELETION *** - {file} was unable to be deleted')
+        # val = input("\n Would you like to delete it? (y/n): ")
+        # if val == 'y':
+        try:
+            os.remove(file)
+            print("\nFile was successfully deleted.\n\n")
+            logger.info(f'*** FILE SUCCESSFULLY DELETED *** - {file} has been deleted')
+        except:
+            print("\nAttempted file deletion failed.  Please manually remove it.\n\n")
+            logger.info(f'*** FAILED FILE DELETION *** - {file} was unable to be deleted')
         global error_count
         error_count = error_count+1
         

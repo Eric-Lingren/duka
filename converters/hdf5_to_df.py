@@ -11,7 +11,7 @@ import datetime
 # hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2019/EURUSD-2019-1Min.h5'
 # hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2018/EURUSD-2018-1Min.h5'
 # hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2021/h5/USDJPY-2020-1M.h5'
-hdf5_filename = '/Volumes/External/Trading/historical-data/forex/GBPUSD/2015/h5/GBPUSD-2015-1W.h5'
+hdf5_filename = '/Volumes/External/Trading/historical-data/forex/EURUSD/2013/h5/EURUSD-2013-1Min.h5'
 
 
 start_time = time.time()

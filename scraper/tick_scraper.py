@@ -47,49 +47,65 @@ def is_dst(date):
 
 # Builds the 24 unique urls needed for each day of tick data and saves those in the data_urls array 
 def build_url(pair, date):
-    weekday = date.weekday()
+    # weekday = date.weekday()
     hours = list(range(24))
-
-    if weekday == 4:
-        if(is_dst(date) == False):   # Its not day light savings Friday, market closes at 2200 gmt
-            del hours[22:]  
-        else:   # It is not day light savings on Sunday, market opens at 2100 gmt
-            del hours[21:] 
-    if weekday == 6:
-        if(is_dst(date) == False):   # Its not day light savings on Sunday (ie Jan), market opens at 2200 gmt
-            del hours[:22]  # Dont include any files before 2200 gmt
-        else:   # It is daylight savings on Sunday (ie. July), market opens at 2100 gmt
-            del hours[:21]  # Dont include any files before 2100 gmt
-
-    newyears_day = datetime(date.year, 1, 1)
-    if date == newyears_day:
-        del hours[:22] #  Its new years day and market opens at 2200 GMT
-
-    christmas = datetime(date.year, 12, 25)
-    if date == christmas:
-        del hours[8:22] #  Its christmas and market is closed from GMT 0800 - 2200
-
-    newyears_eve = datetime(date.year, 12, 31)
-    if date == newyears_eve:
-        del hours[22:] #  Its new years eve and market closes at GMT 2200
-
-    month_int = int(date.month)-1
     year = f'{date.year}'
+    month_int = int(date.month)-1
     month = f'{month_int}' if date.month > 10 else f'0{month_int}' 
     day = f'{date.day}' if date.day > 9 else f'0{date.day}' 
-    hour = None
-    if len(hours) > 0:
-        for i in hours:
-            if i < 10:
-                hour = f'0{i}'
-            else:
-                hour = f'{i}'
-            new_url = url.replace('PAIR', pair)
-            new_url = new_url.replace('YYYY', year)
-            new_url = new_url.replace('MM', month)
-            new_url = new_url.replace('DD', day)
-            new_url = new_url.replace('HH', hour)
-            data_urls.append(new_url)
+
+    for i in hours:
+        if i < 10:
+            hour = f'0{i}'
+        else:
+            hour = f'{i}'
+        new_url = url.replace('PAIR', pair)
+        new_url = new_url.replace('YYYY', year)
+        new_url = new_url.replace('MM', month)
+        new_url = new_url.replace('DD', day)
+        new_url = new_url.replace('HH', hour)
+        data_urls.append(new_url)
+
+    # if weekday == 4:
+    #     if(is_dst(date) == False):   # Its not day light savings Friday, market closes at 2200 gmt
+    #         del hours[22:]  
+    #     else:   # It is not day light savings on Sunday, market opens at 2100 gmt
+    #         del hours[21:] 
+    # if weekday == 6:
+    #     if(is_dst(date) == False):   # Its not day light savings on Sunday (ie Jan), market opens at 2200 gmt
+    #         del hours[:22]  # Dont include any files before 2200 gmt
+    #     else:   # It is daylight savings on Sunday (ie. July), market opens at 2100 gmt
+    #         del hours[:21]  # Dont include any files before 2100 gmt
+
+    # newyears_day = datetime(date.year, 1, 1)
+    # if date == newyears_day:
+    #     del hours[:22] #  Its new years day and market opens at 2200 GMT
+
+    # christmas = datetime(date.year, 12, 25)
+    # if date == christmas:
+    #     del hours[8:22] #  Its christmas and market is closed from GMT 0800 - 2200
+
+    # newyears_eve = datetime(date.year, 12, 31)
+    # if date == newyears_eve:
+    #     del hours[22:] #  Its new years eve and market closes at GMT 2200
+
+    # month_int = int(date.month)-1
+    # year = f'{date.year}'
+    # month = f'{month_int}' if date.month > 10 else f'0{month_int}' 
+    # day = f'{date.day}' if date.day > 9 else f'0{date.day}' 
+    # hour = None
+    # if len(hours) > 0:
+    #     for i in hours:
+    #         if i < 10:
+    #             hour = f'0{i}'
+    #         else:
+    #             hour = f'{i}'
+    #         new_url = url.replace('PAIR', pair)
+    #         new_url = new_url.replace('YYYY', year)
+    #         new_url = new_url.replace('MM', month)
+    #         new_url = new_url.replace('DD', day)
+    #         new_url = new_url.replace('HH', hour)
+    #         data_urls.append(new_url)
 
 
 
@@ -98,12 +114,14 @@ def build_dates(start_date, end_date):
     delta = end_date - start_date       
     for i in range(delta.days + 1):
         day = start_date + timedelta(days=i)
-        weekday = day.weekday()
-        if weekday != 5: # Ignores all Saturdays
-            requested_dates.append(day)
-            compile_dates(requested_dates)  
-        else:
-            print('SATURDAY - Skipping Date')
+        # weekday = day.weekday()
+        requested_dates.append(day)
+        compile_dates(requested_dates)  
+        # if weekday != 5: # Ignores all Saturdays
+        #     requested_dates.append(day)
+        #     compile_dates(requested_dates)  
+        # else:
+        #     print('SATURDAY - Skipping Date')
     # print(requested_dates)
     # compile_dates(requested_dates)   
 

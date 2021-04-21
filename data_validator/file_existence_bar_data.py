@@ -1,7 +1,7 @@
 import os
 import time
+from .logger import config_logger
 from datetime import datetime, timedelta
-from logger import config_logger
 
 
 

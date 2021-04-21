@@ -1,8 +1,8 @@
 import os
 import time
 import pytz
+from .logger import config_logger
 from datetime import datetime, timedelta
-from logger import config_logger
 
 def init_file_existence_ticks(file_directory, log_directory):
     print('\n\nChecking all files for existence...')

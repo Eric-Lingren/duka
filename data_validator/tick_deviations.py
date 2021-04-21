@@ -1,13 +1,13 @@
 import os
-import asyncio
+import time
 import lzma
 import struct
+import asyncio
 import pandas as pd
-import time
 from datetime import datetime
+from .logger import config_logger
 from statistics import mean, stdev
-from progress_bar import progress_bar
-from logger import config_logger
+from .progress_bar import progress_bar
 
 tasks = []
 responses = []
@@ -45,6 +45,7 @@ def build_tasks(sorted_files):
         loop.run_until_complete(asyncio.wait(tasks))
     except KeyboardInterrupt:
         print("Caught keyboard interrupt. Canceling tasks...")
+
     print(f'\nFile Checking Completed in {time.time() - start_time} Seconds\n')
     tick_mean = int(mean(file_tick_counts))
     deviation = int(stdev(file_tick_counts))
@@ -54,6 +55,9 @@ def build_tasks(sorted_files):
     for i in range(len(file_tick_counts)):
         ticks = file_tick_counts[i]
         if ticks < tick_mean - 1.5 * deviation:
+            print(len(sorted_files))
+            print(i)
+            print(sorted_files[i])
             deviation_violiation_count += 1
             logger.warn(f'*** LOW TICK DATA *** - {sorted_files[i]} has {ticks} ticks which is more than 1.5 standard deviations of {deviation} below the mean of {tick_mean} for this data set')
 
@@ -83,6 +87,23 @@ async def decompress_data(file):
     res = count_df_rows(df)
     responses.append(res)
     progress_bar(tasks, responses)
+
+
+    # tick_mean = int(mean(file_tick_counts))
+    # deviation = int(stdev(file_tick_counts))
+
+    # for i in range(len(file_tick_counts)):
+    #     ticks = file_tick_counts[i]
+    #     if ticks < tick_mean - 1.5 * deviation:
+    #         # print(len(sorted_files))
+    #         # print(i)
+    #         # print(sorted_files[i])
+    #         print(file)
+    #         deviation_violiation_count += 1
+    #         logger.warn(f'*** LOW TICK DATA *** - {file} has {ticks} ticks which is more than 1.5 standard deviations of {deviation} below the mean of {tick_mean} for this data set')
+
+
+
 
 
 def count_df_rows(df):

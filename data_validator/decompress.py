@@ -1,12 +1,12 @@
 import os
-import asyncio
 import lzma
-import struct
-import pandas as pd
 import time
-from datetime import datetime, timedelta
+import struct
+import asyncio
+import pandas as pd
 from tqdm import tqdm
-from progress_bar import progress_bar
+from datetime import datetime, timedelta
+from .progress_bar import progress_bar
 from multiprocessing import Pool
 
 tasks = []
