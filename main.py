@@ -4,15 +4,20 @@ from data_validator import main_validator
 from converters import resample_tick_to_bar
 from converters import integrated_csv_to_hdf5
 
-pair = 'GBPUSD'
+# Duka URL Tags
+# XAGUSD XAUUSD BRENTCMDUSD GASCMDUSD SOYBEANCMDUSX SUGARCMDUSD
+
+pair = 'BTCUSD'
 # years = ['2020', '2019', '2018', '2017', '2016']
-years = ['2015', '2014', '2013', '2012', '2011', '2010']
+# years = ['2015', '2014', '2013', '2012', '2011', '2010']
 # years = ['2009', '2008', '2007', '2006', '2005']
 # years = ['2009', '2008']
-# years = ['2017', '2016']
-# years = ['2010']
+# years = ['2016']
+years = ['2021']
 # years = ['2018', '2017', '2016']
-dir_path = '/Volumes/External/Trading/historical-data/forex'
+# dir_path = '/Volumes/External/Trading/historical-data/forex'
+# dir_path = '/Volumes/External/Trading/historical-data/commodities'
+dir_path = '/Volumes/External/Trading/historical-data/crypto'
 # dir_path = '/Users/ericlingren/Desktop'
 
 

@@ -65,12 +65,33 @@ def decompress_data(file):
     ms_since_epoch = file_date_object.timestamp() * 1000 # converts the file date to ms since epoch
     df['TIME'] = pd.to_datetime(df['TIME'] + ms_since_epoch, unit='ms') # adds timestamp + epoch offset and converts format
 
+    instrument = file[-31:-25]
+    decimal_factor = generate_decimals(instrument)
+
     # CONVERTS VALUES INTO DECIMALS
     df['ASKP'] = df['ASKP'].astype('float64') 
-    df['ASKP'] = df['ASKP'].div(100000)
+    df['ASKP'] = df['ASKP'].div(decimal_factor)
     df['BIDP'] = df['BIDP'].astype('float64') 
-    df['BIDP'] = df['BIDP'].div(100000)
+    df['BIDP'] = df['BIDP'].div(decimal_factor)
 
     df.to_csv(output_file, float_format='%g', date_format='%Y-%m-%d %H:%M:%S:%f', mode='a', header=False, index=False)
 
     return True
+
+
+def generate_decimals(instrument):
+    decimal_factor = None
+    try:
+        #  Use for specialized instruments
+        match = next(x for x in decimal_factors if x["instrument"] == instrument)
+        decimal_factor = match['decimal_factor']
+    except:
+        # Use for all forex pairs to output 5 decimal paces
+        decimal_factor = 100000
+    return decimal_factor
+
+decimal_factors = [
+    { 'instrument' : 'XAUUSD', 'decimal_factor' : 1000 },
+    { 'instrument' : 'XAGUSD', 'decimal_factor' : 1000 },
+    { 'instrument' : 'BTCUSD', 'decimal_factor' : 10 }
+]
