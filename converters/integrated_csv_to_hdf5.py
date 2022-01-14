@@ -1,7 +1,6 @@
 import os
 import sys
 import time
-import tables
 import pandas as pd
 
 ## GLOBAL VARIBLES THAT CAN BE CHANGED BY THE USER:
