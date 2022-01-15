@@ -1,11 +1,15 @@
+import datetime
 import tkinter as tk
 from tkinter import ttk
 from tkinter import Label
 from tkinter import Text
+from tkinter import Button
 from tkinter import filedialog
-
+from tkinter.messagebox import askyesno
 # from main import main_gui
-# Global Option Select Varibles
+
+
+#* Global Option Select Varibles
 forex_options_list = ["EURAUD", "SGDJPY", "AUDUSD", "USDGBP"]
 commodity_options_list = ["XAUUSD", "XAGUSD", ]
 crypto_options_list = ["BTCUSD", "ETHUSD", "LTCUSD" ]
@@ -14,127 +18,165 @@ indice_options_list = ["BTCUSD", "ETHUSD", "LTCUSD" ]
 bond_options_list = ["BTCUSD", "ETHUSD", "LTCUSD" ]
 
 
-# Configures Global App Settings
-window = tk.Tk()
-window.title('DukasCopy Download Scraper')
-window.geometry('700x500')
+class App(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.selected_asset = ''
+        self.chosen_years = []
+        self.chosen_download_location = ''
+        self.init_build_app_options()
+    
+
+    def init_build_app_options(self):
+        asset_heading = Label(root, text='Choose an Asset:', font=("Helvetica", 20)) 
+        asset_heading.grid(row = 2, column = 1, pady=(5, 10))
+        self.init_forex_options()
+        self.init_crypto_options()
+        self.init_commodity_options()
+        self.init_folder_options()
+        self.init_year_options()
+        self.init_download_button()
+
+
+    #* Renders Forex Pairs Submenu
+    def init_forex_options(self):
+        forex_options_list.sort()
+        selected_forex_pair = tk.StringVar(root)
+        selected_forex_pair.set("Select A Forex Pair")
+        forex_options = tk.OptionMenu(root, selected_forex_pair, *forex_options_list)
+
+        def handle_fx_selected(*args):
+            self.selected_asset = selected_forex_pair.get()
+
+        selected_forex_pair.trace("w", handle_fx_selected)
+        forex_options.grid(row = 3, column = 0)
+
+
+    #* Renders Crypto Pairs Submenu
+    def init_commodity_options(self):
+        commodity_options_list.sort()
+        selected_commodity_pair = tk.StringVar(root)
+        selected_commodity_pair.set("Select a Commodity")
+        commodity_options = tk.OptionMenu(root, selected_commodity_pair, *commodity_options_list)
+
+        def handle_fx_selected(*args):
+            self.selected_asset = selected_commodity_pair.get()
+
+        selected_commodity_pair.trace("w", handle_fx_selected)
+        commodity_options.grid(row = 3, column = 1)
+
+
+    #* Renders Crypto Pairs Submenu
+    def init_crypto_options(self):
+        crypto_options_list.sort()
+        selected_crypto_pair = tk.StringVar(root)
+        selected_crypto_pair.set("Select a Crypto")
+        crypto_options = tk.OptionMenu(root, selected_crypto_pair, *crypto_options_list)
+
+        def handle_fx_selected(*args):
+            self.selected_asset = selected_crypto_pair.get()
+
+        selected_crypto_pair.trace("w", handle_fx_selected)
+        crypto_options.grid(row = 3, column = 2)
+
+
+    #* Renders Browse Folder Download Location
+    def init_folder_options(self):
+        output_path_label = Label(
+            root, 
+            text='Choose a Download Location:', 
+            font=("Helvetica", 20) 
+        )
+        output_path_label.grid(row = 4, column = 1, pady=(40, 10))
+
+        def getFolderPath():
+            self.chosen_download_location = filedialog.askdirectory()
+            output_path_text.config(text = 'Download Location: '+ self.chosen_download_location)
+
+        folder_btn = ttk.Button(root, text="Browse Folders",command=getFolderPath)
+        folder_btn.grid(row = 5, column = 1, pady=(5, 5))
+        output_path_text = Label(root, text='Download Location: ' )
+        output_path_text.grid(row = 6, column = 1, pady=(5, 5))
+
+
+    #* Renders Year Selection 
+    def init_year_options(self):
+        year_label = Label(
+            root, 
+            text='Choose a Year:', 
+            font=("Helvetica", 20) 
+        )
+        year_label.grid(row = 7, column = 1, pady=(40, 10))
+
+        current_year = datetime.datetime.now().year
+        starting_year = 1999
+        year_options_list = []
+        for i in range(current_year, starting_year, -1):
+            year_options_list.append( str(i) )
+
+        selected_year = tk.StringVar(root)
+        selected_year.set("Select a Year")
+        year_options = tk.OptionMenu(root, selected_year, *year_options_list)
+        year_options.grid(row = 8, column = 1)
+
+        def handle_year_selected(*args):
+            chosen_year = selected_year.get()
+            self.chosen_years.append(chosen_year)
+            self.chosen_years.sort(reverse=True)
+            chosen_years_str = ''
+            for year in self.chosen_years:
+                chosen_years_str =  chosen_years_str + year + ' '
+            output_years_text.config(text = 'Selected Years: '+ chosen_years_str)
+
+        choose_year_button = tk.Button(
+            root, 
+            text="Add Year", 
+            command=handle_year_selected)
+        choose_year_button.grid(row = 9, column = 1)
+
+        output_years_text = Label(root, text='Selected Years: ' )
+        output_years_text.grid(row = 10, column = 1, pady=(5, 5))
+    
+
+    #* Download Button
+    def init_download_button(self):
+        download_button = ttk.Button(self, text='Download', command=self.confirm_download)
+        # download_button.grid(row = 10, column = 1)
+        download_button.grid()
+
+
+    #* Popup confirmation
+    def confirm_download(self):
+        answer = askyesno(
+            title='Confirmation',
+            message=f'Are you sure that you want to download:\n{self.selected_asset}\nfor\n{self.chosen_years}\nto\n{self.chosen_download_location}')
+        if answer:
+            self.run_download()
+        if answer == False:
+            self.selected_asset = ''
+            self.chosen_years = []
+            self.chosen_download_location = ''
+    
+
+    #* If popup confirmed, begin download
+    def run_download(self):
+        print('ran run dld')
+        print(self.selected_asset)
+        print(self.chosen_years)
+        print(self.chosen_download_location)
 
 
 
-def handle_chosen_asset(asset):
-    print(asset)
-    global download_asset
-    download_asset = asset
-    return None
 
 
-# Renders Forex pairs submenu if forex is chosen from main asset class list
-# def render_forex_menu():
-forex_options_list.sort()
-selected_forex_pair = tk.StringVar(window)
-selected_forex_pair.set("Select A Forex Pair")
-forex_options = tk.OptionMenu(window, selected_forex_pair, *forex_options_list)
+#* Configures Global GUI App Settings and Starts App
+if __name__ == "__main__":
+    root = tk.Tk()
+    App(root).grid(sticky="nsew")
+    root.title('DukasCopy Download Scraper')
+    root.geometry('1000x600')
+    heading=Label(root, text='Historical Data Downloader', font=("Helvetica", 28))
+    heading.grid(row=0, column=1, pady=(0,20))
+    root.grid_columnconfigure((0, 1, 2), weight=1)
+    root.mainloop()
 
-def handle_fx_selected(*args):
-    selected_asset = selected_forex_pair.get()
-    handle_chosen_asset(selected_asset)
-
-selected_forex_pair.trace("w", handle_fx_selected)
-forex_options.pack()
-
-
-
-
-# Renders Crypto pairs submenu if crypto is chosen from main asset class list
-# def render_crypto_menu():
-crypto_options_list.sort()
-selected_crypto_pair = tk.StringVar(window)
-selected_crypto_pair.set("Select A Cryptocurrency")
-crypto_options = tk.OptionMenu(window, selected_crypto_pair, *crypto_options_list)
-
-def handle_fx_selected(*args):
-    selected_asset = selected_crypto_pair.get()
-    handle_chosen_asset(selected_asset)
-
-selected_crypto_pair.trace("w", handle_fx_selected)
-crypto_options.pack()
-
-
-
-# # Decides which sub-asset class menup to render in the app based on asset class selection
-# def render_suboption(selected_asset_class):
-#     if(selected_asset_class == 'Forex'):
-#         render_forex_menu()
-#     if(selected_asset_class == 'Cryptos'):
-#         render_crypto_menu()
-
-
-# def handle_chosen_commodity(*args):
-#     chosen_asset_class = asset_class_value.get()
-#     render_suboption(chosen_asset_class)
-#     return None
-
-
-# # Builds Intitial Asset Class Dropdown
-# commodity_options_list = ["Forex", "Indices", "Commodities", "Cryptos"]
-# commodity_options_list.sort()
-# asset_class_value = tk.StringVar(window)
-# asset_class_value.set("Select Asset Class")
-# asset_class_value.trace("w", handle_chosen_commodity)
-# asset_options = tk.OptionMenu(window, asset_class_value, *commodity_options_list)
-# asset_options.pack()
-
-
-
-
-
-
-
-
-output_path_label = Label(window, text='Choose Download Location')
-output_path_label.pack()
-
-def getFolderPath():
-    global output_folder_selected
-    output_folder_selected = filedialog.askdirectory()
-    print(output_folder_selected)
-    # output_path_text = Text(window ,text='Downloaded data will be saved to ' + output_folder_selected)
-    # output_path_text.pack()
-    output_path_text.config(text = 'Download Location: '+ output_folder_selected)
-
-
-btnFind = ttk.Button(window, text="Browse Folder",command=getFolderPath)
-btnFind.pack()
-output_path_text = Label(window, text='Download Location: ' )
-output_path_text.pack()
-
-
-
-def download_data():
-    print('downloding')
-    print(download_asset)
-    print(download_year)
-    print(output_folder_selected)
-    # main_gui(download_asset, download_year, output_folder_selected)
-
-
-
-year_label = tk.Label(text="Year")
-year_entry = tk.Entry()
-year_label.pack()
-year_entry.pack()
-
-def set_year(*args):
-    year_value = year_entry.get()
-    global download_year
-    download_year = year_value
-    download_data()
-
-
-button = tk.Button(window, text="Download Data", command=set_year)
-button.pack()
-
-
-
-
-window.mainloop()
