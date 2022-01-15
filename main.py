@@ -36,6 +36,15 @@ def scrape_resample_clean():
 def main():
     scrape_resample_clean()
 
+def main_gui(download_asset, download_year, output_folder_selected):
+    print('main gui ran')
+    global pair
+    pair = download_asset
+    global years
+    years = [download_year]
+    global dir_path
+    dir_path = output_folder_selected
+    # main()
 
 if __name__ == '__main__':
     main()
