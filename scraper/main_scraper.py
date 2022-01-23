@@ -18,8 +18,9 @@ def set_global_vars(current_commodity, current_year, dir_path):
     year = current_year
     base_directory = dir_path
     output_path = f'{base_directory}/{currency}/{year}/raw-download-data'
-    start_date = f'{year}-01-01'    # First date of data requested. Format =  'YYYY-MM-DD'
-    end_date = f'{year}-12-31'      # Last date of data requested. Format = 'YYYY-MM-DD'
+    start_date = f'{year}-01-03'    # First date of data requested. Format =  'YYYY-MM-DD'
+    end_date = f'{year}-01-03'      # Last date of data requested. Format = 'YYYY-MM-DD'
+    # end_date = f'{year}-01-07'      # Last date of data requested. Format = 'YYYY-MM-DD'
     timeframe = 'tick'  
 
 
@@ -41,9 +42,9 @@ def run_scraper(start_on, end_on, task_count):
         end_on
     )
     # Prints status bars:
-    with tqdm(total=task_count) as pbar:
-        for x in res:
-            pbar.update(1)
+    # with tqdm(total=task_count) as pbar:
+    #     for x in res:
+    #         pbar.update(1)
 
 
 
@@ -72,17 +73,6 @@ def init_main_scraper(currency, year, dir_path):
         print(f"                            {currency}")
         print(f"                      {iteration_start_date}")
         print('------------------------------------------------------------------\n')
-
         run_scraper(iteration_start_date, iteration_start_date, task_count)
+        # return
 
-
-
-
-
-
-# https://datafeed.dukascopy.com/datafeed/EURUSD/2019/00/02/23h_ticks.bi5   # January 2
-# https://datafeed.dukascopy.com/datafeed/EURUSD/2019/01/05/02h_ticks.bi5   # Feb 5
-# https://datafeed.dukascopy.com/datafeed/EURUSD/2019/08/04/01h_ticks.bi5   # Sept 3
-# https://datafeed.dukascopy.com/datafeed/EURUSD/2019/09/03/00h_ticks.bi5  # October 3
-
-# https://datafeed.dukascopy.com/datafeed/EURUSD/2019/06/05/21h_ticks.bi5

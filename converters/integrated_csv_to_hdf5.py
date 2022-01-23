@@ -1,18 +1,9 @@
 import os
-import sys
 import time
 import pandas as pd
 
-## GLOBAL VARIBLES THAT CAN BE CHANGED BY THE USER:
-# equity = 'EURNZD'
-# # years = ['2020']
-# years = ['2020', '2019', '2018', '2017', '2016']
-# base_path = '/Volumes/External/Trading/historical-data/forex/'
-
-
 
 start_time = time.time()
-
 
 def set_global_vars(currency, current_year, dir_path):
     global equity
@@ -30,11 +21,6 @@ def set_global_vars(currency, current_year, dir_path):
 
 
 def build_folder_structure():
-# for year in years:
-    # folder = f'{base_path}{equity}/{year}'
-    # all_dir_files = os.listdir(folder)
-    # csv_files = []
-
     for file in all_dir_files:
         if file.endswith('.csv'):
             if not file.startswith('._'):
@@ -50,15 +36,12 @@ def build_folder_structure():
 
 
 def convert_file(file):
-
     input_filepath = f'{folder}/{file}'
     output_filepath = input_filepath.replace('.csv', '.h5')
     output_filename = file.replace('.csv', '.h5')
-
     print(f'\n\n---------  CURRENTLY PROCESSING: {input_filepath}  -----------')
 
     df = pd.read_csv(input_filepath)
-
     is_tick_data = 'ticks' in input_filepath
     if is_tick_data: # For Tick Data
         df.columns = ['TIME', 'ASKP', 'BIDP'] 
@@ -73,6 +56,7 @@ def convert_file(file):
     name = name.replace('-', '_')
     key = 'FX_' + name
 
+    # HDF conversion doesnt work on apple m1
     df.to_hdf(output_filepath, key=key, mode='w', complevel=5, complib='blosc:zlib')
 
     os.rename(f"{input_filepath}", f"{folder}/csv/{file}")

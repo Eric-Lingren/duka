@@ -1,9 +1,6 @@
-# Takes Approximates 30 minutes to resample 1 yerar of tick data into all timeframes.
-import os
-import sys
 import time
 import pandas as pd
-
+from .python_csv_to_mt4_csv import generate_mt4_data 
 
 print('\n---------- Begining Resampling... ---------- \n')
 start_time = time.time()
@@ -17,12 +14,17 @@ def init_resample_data(currency, year, dir_path):
 
     for timeframe in timeframes:
         print(f'\nResampling {currency} {year} for {timeframe}')
-        output_filename = input_data.replace('ticks', timeframe, 1)
+        output_filename = input_data.replace('ticks', timeframe+'-py', 1)
         df = pd.read_csv(input_data, names=['TIME', 'ASKP', 'BIDP'], parse_dates=True)
-        df.set_index('TIME', inplace=True)
-        df.index = pd.to_datetime(df.index, format='%Y-%m-%d %H:%M:%S:%f')
-        data_bid = df['BIDP'].resample(timeframe).ohlc().dropna()
-        data_bid.to_csv(output_filename, float_format='%g', date_format='%Y-%m-%d %H:%M:%S:%f', mode='a', header=True, index=True)
+
+        #! Builds MT4 compatable Dataset
+        python_dataset = df
+        python_dataset.set_index('TIME', inplace=True)
+        python_dataset.index = pd.to_datetime(python_dataset.index, format='%Y-%m-%d %H:%M:%S:%f')
+        python_dataset = python_dataset['BIDP'].resample(timeframe).ohlc().dropna()
+        python_dataset.to_csv(output_filename, float_format='%g', date_format='%Y-%m-%d %H:%M:%S:%f', mode='a', header=True, index=True)
+        #! Builds MT4 compatable Dataset
+        generate_mt4_data(output_filename)
 
 
 print("\n---------- Resampling Completed in %s Seconds ----------\n\n\n" % (time.time() - start_time))
