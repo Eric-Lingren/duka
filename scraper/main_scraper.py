@@ -18,9 +18,9 @@ def set_global_vars(current_commodity, current_year, dir_path):
     year = current_year
     base_directory = dir_path
     output_path = f'{base_directory}/{currency}/{year}/raw-download-data'
-    start_date = f'{year}-01-03'    # First date of data requested. Format =  'YYYY-MM-DD'
-    end_date = f'{year}-01-03'      # Last date of data requested. Format = 'YYYY-MM-DD'
-    # end_date = f'{year}-01-07'      # Last date of data requested. Format = 'YYYY-MM-DD'
+    start_date = f'{year}-01-01'    # First date of data requested. Format =  'YYYY-MM-DD'
+    # end_date = f'{year}-12-31'      # Last date of data requested. Format = 'YYYY-MM-DD'
+    end_date = f'{year}-01-02'      # Last date of data requested. Format = 'YYYY-MM-DD'
     timeframe = 'tick'  
 
 
