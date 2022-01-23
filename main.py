@@ -5,6 +5,10 @@ from data_validator import main_validator
 from converters import resample_tick_to_bar
 from converters import integrated_csv_to_hdf5
 
+from utilities.configuration import Configuration
+
+
+from downloader.downloader import Downloader
 # Duka URL Tags
 # XAGUSD XAUUSD BRENTCMDUSD GASCMDUSD SOYBEANCMDUSX SUGARCMDUSD BTCUSD
 
@@ -54,3 +58,21 @@ def start_main(download_asset, download_years, output_folder_selected):
 
 if __name__ == '__main__':
     main()
+
+
+class NewMain():
+    def __init__(self, settings):
+        self.settings = settings
+        self.download_tick_data()
+
+
+    def download_tick_data(self):
+        years = self.settings['years']
+        years.sort()
+        self.settings['starting_year'] = int(years[0])
+        self.settings['ending_year'] = int(years[-1])
+        for year in years:
+            self.settings['year'] = year
+            Configuration(self.settings).build_downloads_folder_structure()
+        # Downloader(self.settings)
+

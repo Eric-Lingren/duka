@@ -8,7 +8,7 @@ from tkinter import Button
 from tkinter import filedialog
 from tkinter.messagebox import askyesno
 import tkinter.font as font
-from main import start_main, cancel_main
+from main import start_main, cancel_main, NewMain
 
 
 #* Global Option Select Varibles
@@ -34,7 +34,7 @@ class App(tk.Frame):
             orient ='horizontal',
             length = 500, 
             mode = 'determinate')
-        self.progress_bar.grid(row = 12, column = 1, pady=(5, 5))
+        self.progress_bar.grid(row = 17, column = 1, pady=(5, 5))
         # Init Progress Label
         self.progress_label = None
         self.cancel_download_button = None
@@ -148,8 +148,19 @@ class App(tk.Frame):
             command=handle_year_selected)
         choose_year_button.grid(row = 10, column = 1)
 
+        def clear_years_selected():
+            self.chosen_years = []
+            chosen_years_str = ''
+            output_years_text.config(text = 'Selected Years: '+ chosen_years_str)
+
+        clear_years_button = ttk.Button(
+            root, 
+            text="Clear Years", 
+            command=clear_years_selected)
+        clear_years_button.grid(row = 11, column = 1)
+
         output_years_text = Label(root, text='Selected Years: ' )
-        output_years_text.grid(row = 11, column = 1, pady=(5, 5))
+        output_years_text.grid(row = 12, column = 1, pady=(5, 5))
     
 
     #* Download Button
@@ -162,7 +173,7 @@ class App(tk.Frame):
         )
         download_btn_font = font.Font(family='Helvetica', size=18, weight='bold')
         download_button['font'] = download_btn_font
-        download_button.grid(row = 12, column = 1, pady=(30, 5))
+        download_button.grid(row = 13, column = 1, pady=(30, 5))
 
 
     # #* Popup confirmation
@@ -180,9 +191,9 @@ class App(tk.Frame):
 
     #* If popup confirmed, begin download
     def run_download(self):
-        print(self.selected_asset)
-        print(self.chosen_years)
-        print(self.chosen_download_location)
+        # print(self.selected_asset)
+        # print(self.chosen_years)
+        # print(self.chosen_download_location)
 
         # Append Progress Bar Label to App
         message=f'Downloading: {self.selected_asset} for {self.chosen_years} to {self.chosen_download_location}'
@@ -204,7 +215,14 @@ class App(tk.Frame):
         self.cancel_download_button['font'] = download_btn_font
         self.cancel_download_button.grid(row = 16, column = 1, pady=(5, 5))
 
-        start_main(self.selected_asset, self.chosen_years, self.chosen_download_location)
+        settings = {
+            'asset': self.selected_asset,
+            'years': self.chosen_years,
+            'location': self.chosen_download_location
+        }
+        NewMain(settings)
+
+        # start_main(self.selected_asset, self.chosen_years, self.chosen_download_location)
 
 
     def update_progress_label(self):

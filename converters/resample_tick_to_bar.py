@@ -25,7 +25,7 @@ def init_resample_data(currency, year, dir_path):
         python_dataset.set_index('TIME', inplace=True)
         python_dataset.index = pd.to_datetime(python_dataset.index, format='%Y-%m-%d %H:%M:%S:%f')
         python_dataset = python_dataset['BIDP'].resample(timeframe).ohlc().dropna()
-        python_dataset.to_csv(output_filename, float_format='%g', date_format='%Y-%m-%d %H:%M:%S:%f', mode='a', header=True, index=True)
+        python_dataset.to_csv(output_filename, float_format='%g', date_format='%Y-%m-%d %H:%M:%S', mode='a', header=True, index=True)
         #! Builds MT4 compatable Dataset
         generate_mt4_data(output_filename)
 
