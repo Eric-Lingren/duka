@@ -13,16 +13,16 @@ class Downloader():
         self.year = settings['year']
         self.timeframe = 'tick' 
         self.start_date = datetime.date(year=int(self.year), month=1, day=1)
-        # self.end_date = datetime.date(year=int(self.year)+1, month=1, day=1)
-        self.end_date = datetime.date(year=int(self.year), month=1, day=15)
+        # self.end_date = datetime.date(year=int(self.year)+1, month=1, day=1) #! Prod
+        self.end_date = datetime.date(year=int(self.year), month=1, day=30) #! Testing
         self.task_count = None
         self.current_task_num = 0
         self.download_location = f'{self.location}/{self.asset}/{self.year}/raw-download-data' 
-        self.tasks = []
         self.urls = []
-        self.processed = 0
-        self.errored_urls_list = []
+        self.processed_requests_count = 0
         self.errored_urls_set = set()
+        self.exception_urls_set = set()
+        self.completed_urls_set = set()
     
 
 
@@ -33,7 +33,7 @@ class Downloader():
         for i in range((self.end_date - self.start_date).days):
             current_date = self.start_date + i*day_iterator
             weekday = datetime.date(current_date.year, current_date.month, current_date.day).weekday()
-            if weekday != 6: #! Omitts Saturdays
+            if weekday != 6: #* Omits Saturdays
                 self._build_daily_urls(current_date)
 
     
@@ -59,15 +59,17 @@ class Downloader():
         urls = _hourly_urls_generator()
 
         for url in urls:
-            fetch_task = asyncio.ensure_future(self._get_data(url.format(url)))
-            self.tasks.append(fetch_task)
             self.urls.append(url)
+            # fetch_task = asyncio.ensure_future(self._get_data(url.format(url)))
+            # self.tasks.append(fetch_task)
 
 
     async def _get_data(self, url):
         file_name = self._generate_download_file_name(url)
-        sem = asyncio.Semaphore(1)
-        async with sem:
+        # sem = asyncio.Semaphore(1)
+        # async with sem:
+        attempts = 0
+        while attempts < 5:
             async with ClientSession() as session:
                 try:
                     async with session.get(url) as response:
@@ -75,14 +77,21 @@ class Downloader():
                             data = await response.read()
                             with open(file_name, 'wb') as fd:
                                 fd.write(data)
+                            self.completed_urls_set.add(url)
+                            attempts = 5
+                            self.processed_requests_count += 1
                         else:
-                            self.errored_urls_set.add(url)
-                        self.processed += 1
-                except:
-                    # self.errored_urls_set.add(url)
-                    self.processed += 1
-        #             print('ERROR GET URL: ', url)
-        # return 1
+                            attempts += 1
+                            if attempts == 5 :
+                                self.processed_requests_count += 1
+                                self.errored_urls_set.add(url)
+                except Exception as e: 
+                    print(e)
+                    attempts += 1
+                    if attempts == 5 :
+                        self.processed_requests_count += 1
+                        self.exception_urls_set.add(url)
+
 
 
 
@@ -97,24 +106,23 @@ class Downloader():
         return complete_name
 
 
-    async def get_and_update(self, item):
+    async def _get_and_notify(self, item):
         await self._get_data(item)
-        # self.processed += 1
-        # print(self.processed)
-        print(f'Processed {self.processed} downloads of {len(self.tasks)} for {self.asset} in {self.year}')
+        print(f'Processed {self.processed_requests_count} downloads of {len(self.urls)} for {self.asset} in {self.year}')
 
     
-    async def run(self):
+    async def _run(self):
         await asyncio.gather(*[
             asyncio.create_task(
-                self.get_and_update(url)
+                self._get_and_notify(url)
             ) for url in self.urls
         ])
     
 
     def run_download_tasks(self):
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.run())
+        loop.run_until_complete(self._run())
+
     # def run_download_tasks(self):
     #     loop = asyncio.get_event_loop()
     #     try:

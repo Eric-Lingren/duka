@@ -1,3 +1,4 @@
+from logging import exception
 import time
 import sys
 import os
@@ -7,6 +8,7 @@ from converters import resample_tick_to_bar
 from converters import integrated_csv_to_hdf5
 
 from utilities.system_utilities import create_downloads_folders
+from loggers.logger import Logger
 
 
 from downloader.downloader import Downloader
@@ -70,24 +72,33 @@ class NewMain():
     def init_downloader(self):
         years = self.settings['years']
         years.sort()
+        start = time.time()
+
         for year in years:
             self.settings['year'] = year
-            create_downloads_folders(
-                self.settings['location'], 
-                self.settings['asset'],
-                year
-            )
+            create_downloads_folders(self.settings['location'], self.settings['asset'], year)
             downloader =  Downloader(self.settings)
             downloader.build_download_tasks()
             downloader.run_download_tasks()
             
-            print(sorted(downloader.errored_urls_set))
-            print('\nerrored tasks : ', len(downloader.errored_urls_set))
-            print('total tasks : ', downloader.task_count)
-            print(downloader.download_location)
-            files = next(os.walk(downloader.download_location))
-            print('total files : ', len(files))
-            
+            # print(sorted(downloader.errored_urls_set))
+            sorted_errored_urls = sorted(downloader.errored_urls_set)
+            for errored_url in sorted_errored_urls:
+                print(errored_url)
+            print('\ntotal tasks : ', len(downloader.urls))
+            print('errored URLs : ', len(downloader.errored_urls_set))
+            print('exceptions URLs : ', len(downloader.exception_urls_set))
+            print('completed urls : ', len(downloader.completed_urls_set))
+            total_failed_requests = downloader.errored_urls_set & downloader.exception_urls_set
+            print('total failures : ', len(total_failed_requests))
+            files = len([f for f in os.listdir(downloader.download_location)
+                if os.path.isfile(os.path.join(downloader.download_location, f))])
+            print('total files downloaded: ', files)
+
+            download_logger = Logger(self.settings['location'], self.settings['asset'], year)
+
+        end = time.time()
+        print('Runtime (s): ', end - start)
         print('\nCompleted! You may now run another task...\n')
 
 
