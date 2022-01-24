@@ -88,8 +88,7 @@ class NewMain():
             file_size_validator.build_file_size_validation_tasks()
             file_size_validator.run_file_size_validation_tasks()
             file_decompression = Bi5_Decompression(self.settings)
-            file_decompression.build_decompression_tasks()
-            file_decompression.run_decompression_tasks()
+            file_decompression.run_file_decompression()
 
         end = time.time()
         print('Runtime (s): ', end - start)

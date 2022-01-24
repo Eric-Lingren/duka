@@ -3,7 +3,6 @@ from glob import glob
 
 class Bi5_Decompression():
     def __init__(self, settings):
-        print('init')
         self.location = settings['location']
         self.asset = settings['asset']
         self.year = settings['year']
@@ -13,12 +12,17 @@ class Bi5_Decompression():
         self.processed_count = 0
 
 
-    def build_decompression_tasks(self):
+    def run_file_decompression(self):
+        self._build_decompression_tasks()
+        self._run_decompression_tasks()
+
+
+    def _build_decompression_tasks(self):
         files = [f for f in glob(self.input_dir  + "**/*.bi5")]
         self.bi5_files = sorted(files)
 
 
-    def run_decompression_tasks(self):
+    def _run_decompression_tasks(self):
         for file in self.bi5_files:
             self._decompress_file(file)
 
