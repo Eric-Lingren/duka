@@ -1,11 +1,12 @@
 import time
 import sys
+import os
 from scraper import main_scraper
 from data_validator import main_validator
 from converters import resample_tick_to_bar
 from converters import integrated_csv_to_hdf5
 
-from utilities.configuration import Configuration
+from utilities.system_utilities import create_downloads_folders
 
 
 from downloader.downloader import Downloader
@@ -63,16 +64,30 @@ if __name__ == '__main__':
 class NewMain():
     def __init__(self, settings):
         self.settings = settings
-        self.download_tick_data()
+        self.init_downloader()
 
 
-    def download_tick_data(self):
+    def init_downloader(self):
         years = self.settings['years']
         years.sort()
-        self.settings['starting_year'] = int(years[0])
-        self.settings['ending_year'] = int(years[-1])
         for year in years:
             self.settings['year'] = year
-            Configuration(self.settings).build_downloads_folder_structure()
-        # Downloader(self.settings)
+            create_downloads_folders(
+                self.settings['location'], 
+                self.settings['asset'],
+                year
+            )
+            downloader =  Downloader(self.settings)
+            downloader.build_download_tasks()
+            downloader.run_download_tasks()
+            
+            print(sorted(downloader.errored_urls_set))
+            print('\nerrored tasks : ', len(downloader.errored_urls_set))
+            print('total tasks : ', downloader.task_count)
+            print(downloader.download_location)
+            files = next(os.walk(downloader.download_location))
+            print('total files : ', len(files))
+            
+        print('\nCompleted! You may now run another task...\n')
+
 
