@@ -1,27 +1,30 @@
-import os, asyncio, datetime
+import os, asyncio, datetime, logging
 from aiohttp import ClientSession
-from loggers.logger import create_info_log
+from loggers.logger import setup_logger
 
 
 
-class Downloader():
+class Tick_Downloader():
     def __init__(self, settings):
         self.location = settings['location']
         self.asset = settings['asset']
         self.year = settings['year']
         self.timeframe = 'tick' 
-        self.start_date = datetime.date(year=int(self.year), month=1, day=1)
+        # self.start_date = datetime.date(year=int(self.year), month=1, day=1) #! Prod
         # self.end_date = datetime.date(year=int(self.year)+1, month=1, day=1) #! Prod
+        self.start_date = datetime.date(year=int(self.year), month=1, day=1) #! Testing
         self.end_date = datetime.date(year=int(self.year), month=1, day=5) #! Testing
         self.task_count = None
         self.current_task_num = 0
         self.download_location = f'{self.location}/{self.asset}/{self.year}/raw-download-data' 
+        # self.logger = info_logger(f'{self.location}/{self.asset}')
         self.urls = []
         self.processed_requests_count = 0
         self.errored_urls_set = set()
         self.exception_urls_set = set()
         self.completed_urls_set = set()
-    
+        self.logger = setup_logger('download_logger', f'{self.location}/{self.asset}/{self.asset}-Downloads.log')
+        self.download_logger = logging.getLogger('download_logger')
 
 
     def build_download_tasks(self):
@@ -64,6 +67,7 @@ class Downloader():
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._run())
         self._save_logs()
+        # self._cleanup()
 
 
     async def _run(self):
@@ -81,7 +85,7 @@ class Downloader():
 
     async def _get_data(self, url):
         file_name = self._generate_download_file_name(url)
-        # sem = asyncio.Semaphore(1)
+        # sem = asyncio.Semaphore(10)
         # async with sem:
         attempts = 0
         while attempts < 5:
@@ -135,10 +139,7 @@ class Downloader():
         else:
             mapped_url_failures = '\n    NONE'
 
-        download_log_location = f'{self.location}/{self.asset}/downloads-{self.asset}-{self.year}.log'
-        log_msg = f' DOWNLOAD LOG FOR {self.asset} {self.year}\n  Total Tasks: {total_tasks}\n  Total Downloads: {downloaded_files} \n  Total Failures: {total_failures_count}\n  Failed Downloads: {mapped_url_failures}'
-        create_info_log(download_log_location, log_msg)
-        print(f'\nTOTAL FAILURES : {total_failures_count}\n')
-
-
-
+        log_msg = f' \n--- DOWNLOAD LOG FOR {self.asset} {self.year} ---\n  Total Tasks: {total_tasks}\n  Total Downloads: {downloaded_files} \n  Total Failures: {total_failures_count}\n  Failed Downloads: {mapped_url_failures}\n\n'
+        self.download_logger.info(log_msg)
+        print('\n\n', log_msg)
+        log_msg = ''

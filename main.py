@@ -62,27 +62,30 @@ if __name__ == '__main__':
 
 #* NEW ------------------------------------------- :
 
-from downloader.downloader import Downloader
 from utilities.system_utilities import create_downloads_folders
+from downloaders.tick_downloader import Tick_Downloader
+from validators.file_size_validator import File_Size_Validator
 
 class NewMain():
     def __init__(self, settings):
         self.settings = settings
         self.location = self.settings['location']
         self.asset = self.settings['asset']
+        self.years = self.settings['years']
 
 
     def init_downloader(self):
-        years = self.settings['years']
-        years.sort()
         start = time.time()
 
-        for year in years:
+        for year in self.years:
             self.settings['year'] = year
             create_downloads_folders(self.location, self.asset, year)
-            downloader =  Downloader(self.settings)
+            downloader =  Tick_Downloader(self.settings)
             downloader.build_download_tasks()
             downloader.run_download_tasks()
+            file_size_validator = File_Size_Validator(self.settings)
+            file_size_validator.build_file_size_validation_tasks()
+            file_size_validator.run_file_size_validation_tasks()
 
         end = time.time()
         print('Runtime (s): ', end - start)
