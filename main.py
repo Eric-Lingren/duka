@@ -8,7 +8,7 @@ from converters import resample_tick_to_bar
 from converters import integrated_csv_to_hdf5
 
 from utilities.system_utilities import create_downloads_folders
-from loggers.logger import Logger
+# from loggers.logger import create_info_log
 
 
 from downloader.downloader import Downloader
@@ -66,7 +66,10 @@ if __name__ == '__main__':
 class NewMain():
     def __init__(self, settings):
         self.settings = settings
+        self.location = self.settings['location']
+        self.asset = self.settings['asset']
         self.init_downloader()
+
 
 
     def init_downloader(self):
@@ -76,26 +79,10 @@ class NewMain():
 
         for year in years:
             self.settings['year'] = year
-            create_downloads_folders(self.settings['location'], self.settings['asset'], year)
+            create_downloads_folders(self.location, self.asset, year)
             downloader =  Downloader(self.settings)
             downloader.build_download_tasks()
             downloader.run_download_tasks()
-            
-            # print(sorted(downloader.errored_urls_set))
-            sorted_errored_urls = sorted(downloader.errored_urls_set)
-            for errored_url in sorted_errored_urls:
-                print(errored_url)
-            print('\ntotal tasks : ', len(downloader.urls))
-            print('errored URLs : ', len(downloader.errored_urls_set))
-            print('exceptions URLs : ', len(downloader.exception_urls_set))
-            print('completed urls : ', len(downloader.completed_urls_set))
-            total_failed_requests = downloader.errored_urls_set & downloader.exception_urls_set
-            print('total failures : ', len(total_failed_requests))
-            files = len([f for f in os.listdir(downloader.download_location)
-                if os.path.isfile(os.path.join(downloader.download_location, f))])
-            print('total files downloaded: ', files)
-
-            download_logger = Logger(self.settings['location'], self.settings['asset'], year)
 
         end = time.time()
         print('Runtime (s): ', end - start)

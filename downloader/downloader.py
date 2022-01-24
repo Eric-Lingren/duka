@@ -1,8 +1,6 @@
-import asyncio
-import logging
-import datetime 
+import os, asyncio, datetime
 from aiohttp import ClientSession
-
+from loggers.logger import create_info_log
 
 
 
@@ -14,7 +12,7 @@ class Downloader():
         self.timeframe = 'tick' 
         self.start_date = datetime.date(year=int(self.year), month=1, day=1)
         # self.end_date = datetime.date(year=int(self.year)+1, month=1, day=1) #! Prod
-        self.end_date = datetime.date(year=int(self.year), month=1, day=30) #! Testing
+        self.end_date = datetime.date(year=int(self.year), month=1, day=5) #! Testing
         self.task_count = None
         self.current_task_num = 0
         self.download_location = f'{self.location}/{self.asset}/{self.year}/raw-download-data' 
@@ -45,7 +43,7 @@ class Downloader():
         day = f'{current_date.day}' if current_date.day > 9 else f'0{current_date.day}' 
 
         def _hourly_urls_generator():
-            for i in range(25):
+            for i in range(24):
                 if i < 10:
                     hour = f'0{i}'
                 else:
@@ -60,8 +58,25 @@ class Downloader():
 
         for url in urls:
             self.urls.append(url)
-            # fetch_task = asyncio.ensure_future(self._get_data(url.format(url)))
-            # self.tasks.append(fetch_task)
+
+
+    def run_download_tasks(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._run())
+        self._save_logs()
+
+
+    async def _run(self):
+        await asyncio.gather(*[
+            asyncio.create_task(
+                self._get_and_notify(url)
+            ) for url in self.urls
+        ])
+
+
+    async def _get_and_notify(self, item):
+        await self._get_data(item)
+        print(f'Processed {self.processed_requests_count} downloads of {len(self.urls)} for {self.asset} in {self.year}')
 
 
     async def _get_data(self, url):
@@ -93,8 +108,6 @@ class Downloader():
                         self.exception_urls_set.add(url)
 
 
-
-
     def _generate_download_file_name(self, url):
         year = url.split('/')[-4]
         orig_month = int(url.split('/')[-3])+1
@@ -105,30 +118,27 @@ class Downloader():
         complete_name = f'{self.location}/{self.asset}/{year}/raw-download-data/'+name
         return complete_name
 
-
-    async def _get_and_notify(self, item):
-        await self._get_data(item)
-        print(f'Processed {self.processed_requests_count} downloads of {len(self.urls)} for {self.asset} in {self.year}')
-
     
-    async def _run(self):
-        await asyncio.gather(*[
-            asyncio.create_task(
-                self._get_and_notify(url)
-            ) for url in self.urls
-        ])
-    
+    def _save_logs(self):
+        downloaded_files = len([f for f in os.listdir(self.download_location)
+            if os.path.isfile(os.path.join(self.download_location, f))])
 
-    def run_download_tasks(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._run())
+        total_tasks = len(self.urls)
+        total_failed_requests = self.errored_urls_set | self.exception_urls_set
+        total_failures_count = len(total_failed_requests)
+        sorted_failures = sorted(total_failed_requests)
+        mapped_url_failures = ''
 
-    # def run_download_tasks(self):
-    #     loop = asyncio.get_event_loop()
-    #     try:
-    #         print('here')
-    #         loop.run_until_complete(asyncio.wait(self.tasks))
-    #         print('now here')
-    #     except KeyboardInterrupt:
-    #         print("Caught keyboard interrupt. Canceling tasks...")
+        if total_failures_count > 0 :
+            for failed_url in sorted_failures:
+                mapped_url_failures += '\n    '+failed_url
+        else:
+            mapped_url_failures = '\n    NONE'
+
+        download_log_location = f'{self.location}/{self.asset}/downloads-{self.asset}-{self.year}.log'
+        log_msg = f' DOWNLOAD LOG FOR {self.asset} {self.year}\n  Total Tasks: {total_tasks}\n  Total Downloads: {downloaded_files} \n  Total Failures: {total_failures_count}\n  Failed Downloads: {mapped_url_failures}'
+        create_info_log(download_log_location, log_msg)
+        print(f'\nTOTAL FAILURES : {total_failures_count}\n')
+
+
 

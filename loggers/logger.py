@@ -1,17 +1,38 @@
 import logging
 
-class Logger():
-    def __init__(self, location, asset, year):
-        self.config = logging.basicConfig(
-            filename = f'{location}/{asset}/{year}/example.log', 
-            encoding='utf-8', 
-            level=logging.DEBUG
-        )
 
-    def create_download_log():
-        print('in download log')
+def create_debug_log(file, message):
+    logging.basicConfig(
+        filename = file, 
+        encoding='utf-8', 
+        level=logging.DEBUG
+    )
+    logging.debug(message)
 
-logging.debug('This is debug message')
-logging.info('This is information message')
-logging.warning('This is warning message')
-logging.error('This is warning message')
+
+def create_info_log(file, message):
+    logging.basicConfig(
+        filename = file, 
+        encoding='utf-8', 
+        level=logging.INFO
+    )
+    logging.info(message)
+
+
+def create_warning_log(file, message):
+    logging.basicConfig(
+        filename = file, 
+        encoding='utf-8', 
+        level=logging.WARNING
+    )
+    logging.warning(message)
+
+
+def create_error_log(file, message):
+    logging.basicConfig(
+        filename = file, 
+        encoding='utf-8', 
+        level=logging.ERROR
+    )
+    logging.error(message)
+
