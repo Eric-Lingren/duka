@@ -65,6 +65,7 @@ if __name__ == '__main__':
 from utilities.system_utilities import create_downloads_folders
 from downloaders.tick_downloader import Tick_Downloader
 from validators.file_size_validator import File_Size_Validator
+from decompression.bi5_decompression import Bi5_Decompression
 
 class NewMain():
     def __init__(self, settings):
@@ -86,6 +87,9 @@ class NewMain():
             file_size_validator = File_Size_Validator(self.settings)
             file_size_validator.build_file_size_validation_tasks()
             file_size_validator.run_file_size_validation_tasks()
+            file_decompression = Bi5_Decompression(self.settings)
+            file_decompression.build_decompression_tasks()
+            file_decompression.run_decompression_tasks()
 
         end = time.time()
         print('Runtime (s): ', end - start)

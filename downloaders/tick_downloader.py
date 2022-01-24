@@ -17,7 +17,6 @@ class Tick_Downloader():
         self.task_count = None
         self.current_task_num = 0
         self.download_location = f'{self.location}/{self.asset}/{self.year}/raw-download-data' 
-        # self.logger = info_logger(f'{self.location}/{self.asset}')
         self.urls = []
         self.processed_requests_count = 0
         self.errored_urls_set = set()
@@ -67,7 +66,6 @@ class Tick_Downloader():
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._run())
         self._save_logs()
-        # self._cleanup()
 
 
     async def _run(self):

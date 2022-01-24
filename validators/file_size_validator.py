@@ -8,9 +8,9 @@ class File_Size_Validator():
         self.asset = settings['asset']
         self.year = settings['year']
         self.download_location = f'{self.location}/{self.asset}/{self.year}/raw-download-data'
+        self.file_list = []
         self.processed_count = 0
         self.successfully_validated_count = 0
-        self.file_list = []
         self.successfully_deleted_files_set = set()
         self.failed_deleted_files_set = set()
         self.logger = setup_logger('file_size_logger', f'{self.location}/{self.asset}/{self.asset}-File_Sizes.log')
