@@ -191,10 +191,6 @@ class App(tk.Frame):
 
     #* If popup confirmed, begin download
     def run_download(self):
-        # print(self.selected_asset)
-        # print(self.chosen_years)
-        # print(self.chosen_download_location)
-
         # Append Progress Bar Label to App
         message=f'Downloading: {self.selected_asset} for {self.chosen_years} to {self.chosen_download_location}'
         self.downloading_confirm_msg = ttk.Label(root, text=message)
@@ -220,7 +216,7 @@ class App(tk.Frame):
             'years': self.chosen_years,
             'location': self.chosen_download_location
         }
-        NewMain(settings)
+        NewMain(settings).init_downloader()
 
         # start_main(self.selected_asset, self.chosen_years, self.chosen_download_location)
 

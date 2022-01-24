@@ -62,15 +62,14 @@ if __name__ == '__main__':
 
 #* NEW ------------------------------------------- :
 
-from utilities.system_utilities import create_downloads_folders
 from downloader.downloader import Downloader
+from utilities.system_utilities import create_downloads_folders
+
 class NewMain():
     def __init__(self, settings):
         self.settings = settings
         self.location = self.settings['location']
         self.asset = self.settings['asset']
-        self.init_downloader()
-
 
 
     def init_downloader(self):
