@@ -1,17 +1,12 @@
-from logging import exception
-import time
-import sys
-import os
+import sys, time
+
+#* LEGACY ------------------------------------------- :
 from scraper import main_scraper
 from data_validator import main_validator
 from converters import resample_tick_to_bar
 from converters import integrated_csv_to_hdf5
 
-from utilities.system_utilities import create_downloads_folders
-# from loggers.logger import create_info_log
 
-
-from downloader.downloader import Downloader
 # Duka URL Tags
 # XAGUSD XAUUSD BRENTCMDUSD GASCMDUSD SOYBEANCMDUSX SUGARCMDUSD BTCUSD
 
@@ -63,6 +58,12 @@ if __name__ == '__main__':
     main()
 
 
+
+
+#* NEW ------------------------------------------- :
+
+from utilities.system_utilities import create_downloads_folders
+from downloader.downloader import Downloader
 class NewMain():
     def __init__(self, settings):
         self.settings = settings
