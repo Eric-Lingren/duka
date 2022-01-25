@@ -62,10 +62,11 @@ if __name__ == '__main__':
 
 #* NEW ------------------------------------------- :
 
-from utilities.system_utilities import create_downloads_folders
+from utilities.system_utilities import create_downloads_folders, create_csv_folders, organize_csv_files, zip_raw_downloads_data_folder
 from downloaders.tick_downloader import Tick_Downloader
 from validators.file_size_validator import File_Size_Validator
 from decompression.bi5_decompression import Bi5_Decompression
+from resamplers.data_resampler import Data_Resampler
 
 class NewMain():
     def __init__(self, settings):
@@ -89,6 +90,13 @@ class NewMain():
             file_size_validator.run_file_size_validation_tasks()
             file_decompression = Bi5_Decompression(self.settings)
             file_decompression.run_file_decompression()
+            data_resampler = Data_Resampler(self.settings)
+            data_resampler.resample_tick_data()
+
+            # Cleanups & Organization
+            create_csv_folders(self.location, self.asset, year)
+            organize_csv_files(self.location, self.asset, year)
+            zip_raw_downloads_data_folder(self.location, self.asset, year)
 
         end = time.time()
         print('Runtime (s): ', end - start)
