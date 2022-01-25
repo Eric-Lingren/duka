@@ -14,4 +14,4 @@ def setup_logger(logger_name, log_file, level=logging.INFO):
 
     l.setLevel(level)
     l.addHandler(fileHandler)
-    l.addHandler(streamHandler)    
+    # l.addHandler(streamHandler)  #! Enable to have logs to print to stdout as well as file

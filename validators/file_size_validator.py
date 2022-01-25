@@ -71,7 +71,7 @@ class File_Size_Validator():
         else:
             mapped_file_failures = '\n    NONE'
 
-        log_msg = f' /n--- EMPTY FILES LOG FOR {self.asset} {self.year} ---\n  Total Tasks: {total_files_count}\n  Total Checked: {self.processed_count} \n  Total With Data: {self.successfully_validated_count}\n  Total Without Data: {total_without_data_count}\n  Successful Deletions: {deleted_files_count}\n  Failed Deletions: {failed_deletions_count}\n  Failures (manually delete): {mapped_file_failures}\n\n'
+        log_msg = f' \n--- EMPTY FILES LOG FOR {self.asset} {self.year} ---\n  Total Tasks: {total_files_count}\n  Total Checked: {self.processed_count} \n  Total With Data: {self.successfully_validated_count}\n  Total Without Data: {total_without_data_count}\n  Successful Deletions: {deleted_files_count}\n  Failed Deletions: {failed_deletions_count}\n  Failures (manually delete): {mapped_file_failures}\n\n'
         self.file_size_logger.info(log_msg)
         print('\n\n', log_msg)
         log_msg = ''
