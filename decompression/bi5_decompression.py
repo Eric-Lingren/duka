@@ -70,12 +70,12 @@ class Bi5_Decompression():
         df = df.sort_values(by=['TIME'])
         df.drop_duplicates(subset ="TIME", inplace=True, keep = False) 
         file_date_object = datetime(year, month, day, hour)   # Build date object from integers in file name
-        ms_since_epoch = file_date_object.timestamp() * 1000 # converts the file date to ms since epoch
-        df['TIME'] = pd.to_datetime(df['TIME'] + ms_since_epoch, unit='ms') # adds timestamp + epoch offset and converts format
+        ms_since_epoch = file_date_object.timestamp() * 1000 # Converts the file date to ms since epoch
+        df['TIME'] = pd.to_datetime(df['TIME'] + ms_since_epoch, unit='ms') # Adds timestamp + epoch offset and converts format
 
         # Set Decimal Values
         instrument = file[-31:-25]
-        decimal_factor = self.generate_decimal_places(instrument)
+        decimal_factor = self._generate_decimal_places(instrument)
         df['ASKP'] = df['ASKP'].astype('float64') 
         df['ASKP'] = df['ASKP'].div(decimal_factor)
         df['BIDP'] = df['BIDP'].astype('float64') 
@@ -88,7 +88,7 @@ class Bi5_Decompression():
             self.failed_file_saves.add(file)
 
 
-    def generate_decimal_places(self, instrument):
+    def _generate_decimal_places(self, instrument):
         decimal_factors = [
             { 'instrument' : 'XAUUSD', 'decimal_factor' : 1000 },
             { 'instrument' : 'XAGUSD', 'decimal_factor' : 1000 },
@@ -105,13 +105,7 @@ class Bi5_Decompression():
         return decimal_factor
 
 
-
-
-    
     def _save_logs(self):
-        # downloaded_files = len([f for f in os.listdir(self.download_location)
-        #     if os.path.isfile(os.path.join(self.download_location, f))])
-
         total_tasks = len(self.bi5_files)
         total_failures = self.failed_decompressions | self.failed_file_saves
         total_failures_count = len(total_failures)
