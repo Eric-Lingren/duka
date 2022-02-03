@@ -1,24 +1,17 @@
 import datetime
-import time
 import tkinter as tk
 from tkinter import ttk
 from tkinter import Label
-from tkinter import Text
-from tkinter import Button
 from tkinter import filedialog
-from tkinter.messagebox import askyesno
 import tkinter.font as font
+from setup.asset_config_data import forex_options_list, index_options_list, commodity_options_list, crypto_options_list
 from main import Main
 
 
 #* Global Option Select Varibles
-forex_options_list = ['AUDCAD', 'AUDCHF', 'AUDJPY', 'AUDNZD', 'AUDSGD', 'AUDUSD', 'CADCHF', 'CADHKD', 'CADJPY', 'CHFJPY', 'CHFSGD', 'EURAUD', 'EURCAD', 'EURCHF', 'EURCZK', 'EURDKK', 'EURGBP', 'EURHKD', 'EURHUF', 'EURJPY', 'EURNOK', 'EURNZD', 'EURPLN', 'EURRUB', 'EURSEK', 'EURSGD', 'EURTRY', 'EURUSD', 'GBPAUD', 'GBPCAD', 'GBPCHF', 'GBPJPY', 'GBPNZD', 'GBPUSD', 'HKDJPY', 'NZDCAD', 'NZDCHF', 'NZDJPY', 'NZDUSD', 'SGDJPY', 'TRYJPY', 'USDCAD', 'USDCHF', 'USDCNH', 'USDCZK', 'USDDKK', 'USDHKD', 'USDHUF', 'USDILS', 'USDJPY', 'USDMXN', 'USDNOK', 'USDPLN', 'USDRON', 'USDRUB', 'USDSEK', 'USDSGD', 'USDTHB', 'USDTRY', 'USDZAR', 'ZARJPY'  
-]
-commodity_options_list = ['BRENTCMDUSD', 'GASCMDUSD', 'SOYBEANCMDUSX', 'SUGARCMDUSD', 'COPPERCMDUSD', 'DIESELCMDUSD', 'LIGHTCMDUSD', 'COCOCMDUSD', 'COFFEECMDUSD', 'COTTONCMDUSD', 'OJUICECMDUSD' ]
-crypto_options_list = ["BTCUSD", "ETHUSD", "LTCUSD", 'ADAUSD', 'AVEUSD', 'BATUSD', 'BCHUSD', 'CMPUSD', 'DSHUSD', 'ENJUSD', 'EOSUSD', 'LNKUSD', 'MATUSD', 'MKRUSD', 'TRXUSD', 'UNIUSD', 'XLMUSD', 'XMRUSD', 'YFIUSD' ]
-metal_options_list = ["XAUUSD", "XAGUSD" ]
-indice_options_list = ["BTCUSD", "ETHUSD", "LTCUSD" ]
-bond_options_list = ["BTCUSD", "ETHUSD", "LTCUSD" ]
+metal_options_list = [ 'XAUUSD', 'XAGUSD' ] # Copper COPPERCMDUSD
+
+bond_options_list = [ "BTCUSD", "ETHUSD", "LTCUSD" ]
 
 
 class App(tk.Frame):
@@ -45,8 +38,9 @@ class App(tk.Frame):
         asset_heading = Label(root, text='Choose an Asset:', font=("Helvetica", 20)) 
         asset_heading.grid(row = 2, column = 1, pady=(5, 10))
         self.init_forex_options()
-        self.init_crypto_options()
         self.init_commodity_options()
+        self.init_crypto_options()
+        self.init_index_options()
         self.init_folder_options()
         self.init_year_options()
         self.init_download_button()
@@ -68,13 +62,12 @@ class App(tk.Frame):
 
     #* Renders Crypto Pairs Submenu
     def init_commodity_options(self):
-        commodity_options_list.sort()
         selected_commodity_pair = tk.StringVar(root)
         selected_commodity_pair.set("Select a Commodity")
-        commodity_options = tk.OptionMenu(root, selected_commodity_pair, *commodity_options_list)
+        commodity_options = tk.OptionMenu(root, selected_commodity_pair, *commodity_options_list.keys())
 
         def handle_fx_selected(*args):
-            self.selected_asset = selected_commodity_pair.get()
+            self.selected_asset = commodity_options_list[selected_commodity_pair.get()]
 
         selected_commodity_pair.trace("w", handle_fx_selected)
         commodity_options.grid(row = 3, column = 1)
@@ -82,16 +75,28 @@ class App(tk.Frame):
 
     #* Renders Crypto Pairs Submenu
     def init_crypto_options(self):
-        crypto_options_list.sort()
         selected_crypto_pair = tk.StringVar(root)
         selected_crypto_pair.set("Select a Crypto")
         crypto_options = tk.OptionMenu(root, selected_crypto_pair, *crypto_options_list)
 
         def handle_fx_selected(*args):
-            self.selected_asset = selected_crypto_pair.get()
+            self.selected_asset = crypto_options_list[selected_crypto_pair.get()]
 
         selected_crypto_pair.trace("w", handle_fx_selected)
         crypto_options.grid(row = 3, column = 2)
+
+
+    #* Renders Index Submenu
+    def init_index_options(self):
+        selected_index_pair = tk.StringVar(root)
+        selected_index_pair.set("Select an Index")
+        index_options = tk.OptionMenu(root, selected_index_pair, *index_options_list.keys())
+
+        def handle_fx_selected(*args):
+            self.selected_asset = index_options_list[selected_index_pair.get()]
+
+        selected_index_pair.trace("w", handle_fx_selected)
+        index_options.grid(row = 5, column = 1)
 
 
     #* Renders Browse Folder Download Location
@@ -101,16 +106,16 @@ class App(tk.Frame):
             text='Choose a Download Location:', 
             font=("Helvetica", 20) 
         )
-        output_path_label.grid(row = 5, column = 1, pady=(40, 10))
+        output_path_label.grid(row = 6, column = 1, pady=(40, 10))
 
         def getFolderPath():
             self.chosen_download_location = filedialog.askdirectory()
             output_path_text.config(text = 'Download Location: '+ self.chosen_download_location)
 
         folder_btn = ttk.Button(root, text="Browse Folders",command=getFolderPath)
-        folder_btn.grid(row = 6, column = 1, pady=(5, 5))
+        folder_btn.grid(row = 7, column = 1, pady=(5, 5))
         output_path_text = Label(root, text='Download Location: ' )
-        output_path_text.grid(row = 7, column = 1, pady=(5, 5))
+        output_path_text.grid(row = 8, column = 1, pady=(5, 5))
 
 
     #* Renders Year Selection 
@@ -120,7 +125,7 @@ class App(tk.Frame):
             text='Select Years:', 
             font=("Helvetica", 20) 
         )
-        year_label.grid(row = 8, column = 1, pady=(40, 10))
+        year_label.grid(row = 9, column = 1, pady=(40, 10))
 
         current_year = datetime.datetime.now().year
         starting_year = 1999
@@ -131,7 +136,7 @@ class App(tk.Frame):
         selected_year = tk.StringVar(root)
         selected_year.set("Select a Year")
         year_options = tk.OptionMenu(root, selected_year, *year_options_list)
-        year_options.grid(row = 9, column = 1)
+        year_options.grid(row = 10, column = 1)
 
         def handle_year_selected(*args):
             chosen_year = selected_year.get()
@@ -146,7 +151,7 @@ class App(tk.Frame):
             root, 
             text="Add Year", 
             command=handle_year_selected)
-        choose_year_button.grid(row = 10, column = 1)
+        choose_year_button.grid(row = 11, column = 1)
 
         def clear_years_selected():
             self.chosen_years = []
@@ -157,10 +162,10 @@ class App(tk.Frame):
             root, 
             text="Clear Years", 
             command=clear_years_selected)
-        clear_years_button.grid(row = 11, column = 1)
+        clear_years_button.grid(row = 12, column = 1)
 
         output_years_text = Label(root, text='Selected Years: ' )
-        output_years_text.grid(row = 12, column = 1, pady=(5, 5))
+        output_years_text.grid(row = 13, column = 1, pady=(5, 5))
     
 
     #* Download Button
@@ -173,7 +178,7 @@ class App(tk.Frame):
         )
         download_btn_font = font.Font(family='Helvetica', size=18, weight='bold')
         download_button['font'] = download_btn_font
-        download_button.grid(row = 13, column = 1, pady=(30, 5))
+        download_button.grid(row = 14, column = 1, pady=(30, 5))
 
 
     # #* Popup confirmation
@@ -216,9 +221,7 @@ class App(tk.Frame):
             'years': self.chosen_years,
             'location': self.chosen_download_location
         }
-        NewMain(settings).init_downloader()
-
-        # start_main(self.selected_asset, self.chosen_years, self.chosen_download_location)
+        Main(settings).init_downloader()
 
 
     def update_progress_label(self):
@@ -242,7 +245,7 @@ class App(tk.Frame):
         self.progress_label.destroy()
         self.cancel_download_button.destroy()
         self.downloading_confirm_msg.destroy()
-        cancel_main()
+        # cancel_main()
 
 
 
