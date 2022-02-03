@@ -8,7 +8,7 @@ from tkinter import Button
 from tkinter import filedialog
 from tkinter.messagebox import askyesno
 import tkinter.font as font
-from main import start_main, cancel_main, NewMain
+from main import Main
 
 
 #* Global Option Select Varibles
