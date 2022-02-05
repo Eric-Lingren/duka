@@ -37,7 +37,9 @@ class Main():
             zip_raw_downloads_data_folder(self.location, self.asset, year)
 
         end = time.time()
-        print('Runtime (sec): ', end - start)
-        print('\nCompleted! You may now run another task...\n')
+        # print('Runtime (sec): ', end - start)
+        completion_notification = f'\n Completed in {end - start} seconds. \n You may now run another task...\n'
+        print(completion_notification)
+        return completion_notification
 
 
