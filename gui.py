@@ -26,7 +26,7 @@ class App(tk.Frame):
         # self.progress_label = None
         self.cancel_download_button = None
         self.downloading_confirm_msg = None
-        self.status_msg = ''
+        self.progress_msg = ''
     
 
     def init_build_app_options(self):
@@ -207,9 +207,9 @@ class App(tk.Frame):
 
 
     #* Set Status Message
-    def set_status_message(self, msg):
-        status_msg_text = Label(root, text=msg )
-        status_msg_text.grid(row = 16, column = 1, pady=(5, 5))
+    def set_progress_message(self, msg):
+        progress_msg_text = Label(root, text=msg )
+        progress_msg_text.grid(row = 16, column = 1, pady=(5, 5))
 
 
 
@@ -220,9 +220,9 @@ class App(tk.Frame):
         self.downloading_confirm_msg = ttk.Label(root, text=message)
         self.downloading_confirm_msg.grid(row=14, column=1)
 
-        # self.set_status_message('Downloading...')
-        # status_msg_text = Label(root, text='Downloading...')
-        # status_msg_text.grid(row = 16, column = 1, pady=(5, 5))
+        # self.set_progress_message('Downloading...')
+        # progress_msg_text = Label(root, text='Downloading...')
+        # progress_msg_text.grid(row = 16, column = 1, pady=(5, 5))
 
         # Append Progress Bar Label to App
         # self.progress_label = ttk.Label(root, text=self.update_progress_label())
@@ -244,7 +244,7 @@ class App(tk.Frame):
             'location': self.chosen_download_location
         }
         result = Main(settings).init_downloader()
-        self.set_status_message(result)
+        self.set_progress_message(result)
 
 
     # def update_progress_label(self):
